@@ -1,3 +1,4 @@
+import Navbar from "@/app/_components/Navbar";
 import Footer from "../../_components/Footer";
 
 export default function PrivateLayout({
@@ -7,6 +8,7 @@ export default function PrivateLayout({
 }) {
   return (
     <>
+
       {children}
       <Footer variant="small" />
     </>

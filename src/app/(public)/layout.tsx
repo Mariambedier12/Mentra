@@ -1,4 +1,5 @@
 import Footer from "../_components/Footer";
+import Navbar from "../_components/Navbar";
 
 export default function PublicLayout({
   children,
@@ -7,6 +8,7 @@ export default function PublicLayout({
 }) {
   return (
     <>
+
       {children}
       <Footer variant="big" />
     </>

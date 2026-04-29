@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Poppins, Geist } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "./_components/Navbar";
 import Footer from "./_components/Footer";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
+import NextAuthProvider from './../Providers/Components/nextauth.providers';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 const Font = Poppins({
   subsets: ["latin"],
@@ -24,18 +27,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html lang="en" className={Font.className}>
       <body
         className={`${Font.className} antialiased`}
       >
 
         <div>
-          <Navbar />
-          <div >
-            {children}
-          </div>
+          <NextAuthProvider>
+            <Navbar />
+            <div >
+
+              {children}
+            </div>
+          </NextAuthProvider>
 
         </div>
+
+        <ToastContainer position="top-center" autoClose={3000} />
 
       </body>
     </html>

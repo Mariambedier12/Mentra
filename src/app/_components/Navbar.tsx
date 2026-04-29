@@ -5,38 +5,33 @@ import logo from '../../assets/logo2.png'
 import Image from 'next/image'
 
 import { usePathname } from 'next/navigation'
-
+import { useSession, signOut } from 'next-auth/react'
 
 export default function Navbar() {
 
   const pathname = usePathname()
+  const { data: session, status } = useSession()
 
   const links = [
-
     { path: '/', element: 'Home' },
     { path: '/features', element: 'Features' },
     { path: '/about', element: 'About Us' },
-
   ]
 
   return (
     <div>
-
       <nav className="bg-[#FAF9F7] fixed w-full z-20 top-0 start-0 ">
         <div className="max-w-screen-xl flex items-center justify-between mx-auto py-3">
-
 
           <Link href="/" className="flex items-center ">
             <Image src={logo} alt='logo' />
           </Link>
 
-
-          <div className=" hidden w-full md:block md:w-auto" id="navbar-default">
+          <div className=" hidden w-full md:block md:w-auto">
 
             <ul className="flex items-center space-x-16">
 
               {links.map(link => (
-
                 <li key={link.path}>
                   <Link
                     href={link.path}
@@ -45,28 +40,43 @@ export default function Navbar() {
                     {link.element}
                   </Link>
                 </li>
-
               ))}
 
-              <div className="flex space-x-3">
+              <div className="flex items-center space-x-3">
 
-                <li>
-                  <Link
-                    href="/auth/login"
-                    className="login-btn"
-                  >
-                    Login
-                  </Link>
-                </li>
+                {/* 👇 لو user مسجل دخول */}
+                {status === "authenticated" ? (
+                  <>
 
-                <li>
-                  <Link
-                    href="/auth/register"
-                    className="signup-btn"
-                  >
-                    Sign Up
-                  </Link>
-                </li>
+
+                    <li>
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="login-btn cursor-pointer"
+                      >
+                        Logout
+                      </button>
+                    </li>
+
+                    <span className="text-sm font-medium">
+                      Hi {session?.user?.name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link href="/auth/login" className="login-btn cursor-pointer">
+                        Login
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link href="/auth/register" className="signup-btn cursor-pointer">
+                        Sign Up
+                      </Link>
+                    </li>
+                  </>
+                )}
 
               </div>
 
@@ -76,7 +86,6 @@ export default function Navbar() {
 
         </div>
       </nav>
-
     </div>
   )
 }
