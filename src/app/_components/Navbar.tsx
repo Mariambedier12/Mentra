@@ -17,7 +17,8 @@ export default function Navbar() {
     { path: '/features', element: 'Features' },
     { path: '/about', element: 'About Us' },
   ]
-
+  if (pathname === "/quiz") return null;
+  
   return (
     <div>
       <nav className="bg-[#FAF9F7] fixed w-full z-20 top-0 start-0 ">
