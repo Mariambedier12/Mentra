@@ -1,16 +1,26 @@
-export interface Option {
+export interface Answer {
   id: number;
   text: string;
+  score: number;
 }
 
 export interface Question {
   id: number;
   text: string;
-  options: Option[];
+  answers: Answer[];
+}
+
+export interface QuizData {
+  id: number;
+  title: string;
+  questions: Question[];
+}
+
+export interface SubmitPayload {
+  quizId: number;
+  answers: { questionId: number; selectedAnswerId: number }[];
 }
 
 export interface QuizResult {
-  score: number;
-  totalQuestions: number;
-  answers: Record<number, number>; // questionId -> optionId
+  level: string;
 }
