@@ -19,6 +19,8 @@ export default function Navbar() {
     { path: '/features', element: 'Features' },
     { path: '/about', element: 'About Us' },
   ]
+  if (pathname === "/quiz") return null;
+  
 
   // 👇 links بعد اللوجين
   const privateLinks = [
