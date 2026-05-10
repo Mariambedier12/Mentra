@@ -17,6 +17,7 @@
     "next-auth": "^4.24.14",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
+    "react-calendar": "^6.0.1",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.72.1",
     "react-toastify": "^11.0.5",

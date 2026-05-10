@@ -83,7 +83,7 @@
 .navbar-link.active {
   color: #091A58;
   font-weight: bold;
-  text-shadow: 0 4px 4px rgba(9, 26, 88, 0.5);
+  /* text-shadow: 0 4px 4px rgba(9, 26, 88, 0.5); */
 
 }
 
@@ -249,10 +249,12 @@
     @apply border-border outline-ring/50;
 
   }
+
   body {
     @apply bg-background text-foreground;
 
   }
+
   html {
     @apply font-sans;
 
