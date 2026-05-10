@@ -12,7 +12,7 @@ export default function Laptop() {
           "linear-gradient(-270deg, #F9F9F9 40%, #8C8C8C 130%)",
       }}
     >
-      <div className="max-w-screen-xl mx-auto px- flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto px-8 flex items-center justify-between">
 
 
 

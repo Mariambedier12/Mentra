@@ -73,7 +73,7 @@ export default function VerifyOtp() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/verify-otp", {
+      const res = await fetch("http://mentraa.runasp.net/api/Auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

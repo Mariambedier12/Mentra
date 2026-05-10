@@ -9,7 +9,7 @@ import tool from '../../assets/icontool.png'
 
 export default function Choose() {
   return (
-    <section className="bg-[#FAF9F7] py-17">
+    <section className="bg-[#FAF9F7] py-17 px-8">
 
       <div className="max-w-screen-xl mx-auto px-">
 

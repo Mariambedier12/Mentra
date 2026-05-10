@@ -7,13 +7,13 @@ export default function Header() {
 
   return (
     <section
-      className="w-full mt-15 pt-32 pb-0  min-h-[400px]"
+      className="w-full mt-15 pt-32 pb-0  min-h-[400px] "
       style={{
         background:
           "linear-gradient(150deg, #FAF9F7 40%, #8C94B1 100%, #091A58 100%)",
       }}
     >
-      <div className="max-w-screen-xl mx-auto px- flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto px-8 flex items-center justify-between">
 
 
         <div className="max-w-xl">
@@ -39,7 +39,7 @@ export default function Header() {
             </button>
           </Link>
 
-          <div className="flex items-center gap-3 mt-6">
+          <div className="flex items-center gap-3 mt-6 pb-5">
 
 
             <div className="flex -space-x-2">

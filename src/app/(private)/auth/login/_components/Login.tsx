@@ -26,9 +26,8 @@ export default function Login() {
     }
   });
 
-  const firstError = Object.keys(form.formState.errors)[0];
-
   async function onSubmit(data: loginSchemaForm) {
+
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -37,10 +36,12 @@ export default function Login() {
 
     if (res?.error) {
       toast.error("Incorrect email or password");
-    } else {
-      toast.success("Login successful!");
-      router.push("/");
+      return;
     }
+
+    toast.success("Login successful!");
+
+    router.push("/");
   }
 
   return (
@@ -50,6 +51,7 @@ export default function Login() {
 
         <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-28">
 
+          {/* IMAGE */}
           <div className="w-full lg:w-1/2 flex justify-center">
             <Image
               src={imgl}
@@ -58,10 +60,12 @@ export default function Login() {
             />
           </div>
 
+          {/* FORM */}
           <div className="w-full lg:w-1/2 flex justify-center">
 
             <div className="w-full max-w-md bg-[#FAF9F7] rounded-4xl shadow-2xl p-8 md:p-12 min-h-[550px] flex flex-col justify-between">
 
+              {/* HEADER */}
               <div className="flex items-center gap-3 mb-8">
                 <button
                   onClick={() => {
@@ -81,10 +85,10 @@ export default function Login() {
                 </h1>
               </div>
 
-
+              {/* FORM */}
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-
+                {/* EMAIL */}
                 <div>
                   <label className="block mb-2 text-md font-bold text-[#404043]">
                     Email
@@ -95,13 +99,20 @@ export default function Login() {
                     <input
                       type="email"
                       {...form.register("email")}
-                      className="w-full pl-11 p-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#091A58]" required
+                      className="w-full pl-11 p-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#091A58]"
                       placeholder="your email@example.com"
+                      required
                     />
                   </div>
+
+                  {form.formState.errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.email.message}
+                    </p>
+                  )}
                 </div>
 
-
+                {/* PASSWORD */}
                 <div>
                   <label className="block mb-2 text-md font-bold text-[#404043]">
                     Password
@@ -112,33 +123,40 @@ export default function Login() {
                     <input
                       type="password"
                       {...form.register("password")}
-                      className="w-full pl-11 p-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#091A58] " required
+                      className="w-full pl-11 p-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#091A58]"
                       placeholder="••••••••"
+                      required
                     />
                   </div>
+
+                  {form.formState.errors.password && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.password.message}
+                    </p>
+                  )}
                 </div>
 
-
+                {/* REMEMBER + FORGOT */}
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4" required />
+                  <label className="flex items-center gap-2 text-sm text-gray-600">
+                    <input type="checkbox" className="w-4 h-4" />
                     Remember me
                   </label>
 
-                  <Link href="/auth/forgot-password" className="text-sm text-[#5690D1] font-semibold cursor-pointer">
+                  <Link href="/auth/forgot-password" className="text-sm text-[#5690D1] font-semibold">
                     Forgot password?
                   </Link>
                 </div>
 
-
+                {/* BUTTON */}
                 <button
                   type="submit"
-                  className="w-full bg-[#091A58] text-white py-3.5 rounded-full text-xl cursor-pointer"
+                  className="w-full bg-[#091A58] text-white py-3.5 rounded-full text-xl"
                 >
                   Login
                 </button>
 
-
+                {/* SIGNUP */}
                 <p className="text-sm text-[#404043] text-center pt-2">
                   Don’t have an account?{" "}
                   <Link href="/auth/register" className="text-[#091A58] font-semibold">

@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/forgot-password", {
+      const res = await fetch("http://mentraa.runasp.net/api/Auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
