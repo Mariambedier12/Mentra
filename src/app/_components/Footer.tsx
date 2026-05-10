@@ -106,7 +106,7 @@ export default function Footer({ variant = "small" }) {
 
   // 🟢 الفوتر الصغير (Flowbite → JSX)
   return (
-    <footer className=" bg-[#FAF9F7] fixed bottom-0 left-0 z-20 w-full p-4 bg-neutral-primary-soft border-t border-default shadow-sm md:flex md:items-center md:justify-between md:p-6">
+    <footer className=" bg-[#FAF9F7] fixed bottom-0 left-0 z-20 w-full p-4 bg-neutral-primary-soft md:flex md:items-center md:justify-between md:p-6">
 
       <span className=" pl-20 text-[#8C8C8C] text-sm text-body sm:text-center">
         © 2026{" "}
