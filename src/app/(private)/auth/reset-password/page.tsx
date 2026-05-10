@@ -55,7 +55,7 @@ export default function ResetPassword() {
 
 
 
-      const res = await fetch("/api/reset-password", {
+      const res = await fetch("http://mentraa.runasp.net/api/Auth/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

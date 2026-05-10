@@ -1,11 +1,5 @@
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
-interface AuthUser extends User {
-  id: string;
-  role: string;
-  token: string;
-}
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -24,7 +18,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
 
         const res = await fetch(
-          `${process.env.API}/Auth/login`, // 🔥 صححي هنا
+          "http://mentraa.runasp.net/api/Auth/login",
           {
             method: "POST",
             headers: {
@@ -39,19 +33,13 @@ export const authOptions: NextAuthOptions = {
 
         const payload = await res.json();
 
-        console.log("LOGIN RESPONSE:", payload);
-
-        // 🔥 أهم تعديل هنا
-        if (!res.ok || !payload.token) {
-          return null;
-        }
+        if (!res.ok || !payload.token) return null;
 
         return {
-          id: payload.id || "",
-          name: payload.displayName || "",
-          email: payload.email || "",
-          role: payload.role || "user",
-          image: payload.image || "",
+          id: payload.id ?? payload.email ?? "",
+          name: payload.displayName ?? "",
+          email: payload.email ?? "",
+          role: payload.role ?? "user",
           token: payload.token,
         };
       },
@@ -61,18 +49,24 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as AuthUser;
-        token.id = u.id;
-        token.name = u.name;
-        token.email = u.email;
-        token.role = u.role;
-        token.token = u.token;
+        token.id = (user as any).id;
+        token.name = (user as any).name;
+        token.email = (user as any).email;
+        token.role = (user as any).role;
+        token.token = (user as any).token;
       }
       return token;
     },
 
     async session({ session, token }) {
-      session.user = token as any;
+      session.user = {
+        id: token.id as string,
+        name: token.name as string,
+        email: token.email as string,
+        role: token.role as string,
+        token: token.token as string,
+      } as any;
+
       return session;
     },
   },

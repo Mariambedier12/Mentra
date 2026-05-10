@@ -13,6 +13,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 
+import { checkEmailExists } from '../../services/auth.service';
+
 import { registerSchema, registerSchemaForm } from '@/schema/register.schema';
 
 export default function Page() {
@@ -31,6 +33,13 @@ export default function Page() {
   async function onSubmit(data: registerSchemaForm) {
     try {
 
+      const exists = await checkEmailExists(data.email);
+
+      if (exists) {
+        toast.error("Email already exists");
+        return;
+      }
+
       const newData = {
         userName: data.name,
         displayName: data.name,
@@ -39,18 +48,21 @@ export default function Page() {
         age: 16,
       };
 
-      console.log("SENDING:", newData);
 
-      const res = await fetch('/api/register', {
+
+
+      // ✅ FIX: direct backend API (NOT /api/register)
+      const res = await fetch('http://mentraa.runasp.net/api/Auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(newData),
       });
 
       const result = await res.json();
 
-      console.log("FRONT RESPONSE:", result);
-
+      console.log("REGISTER RESPONSE:", result);
 
       if (res.ok) {
         toast.success('Account created successfully!');
@@ -64,8 +76,8 @@ export default function Page() {
       }
 
     } catch (error) {
-      console.log("FRONT ERROR:", error);
-      toast.error('Account already exist');
+      console.log("REGISTER ERROR:", error);
+      toast.error('Something went wrong');
     }
   }
 
@@ -109,7 +121,6 @@ export default function Page() {
                 </h1>
               </div>
 
-              {/* FORM */}
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
                 {/* NAME */}
