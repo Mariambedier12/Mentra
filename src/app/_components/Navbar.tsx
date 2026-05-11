@@ -19,7 +19,20 @@ export default function Navbar() {
     { path: '/features', element: 'Features' },
     { path: '/about', element: 'About Us' },
   ]
+<<<<<<<<< Temporary merge branch 1
+  if (pathname === "/quiz") return null;
+  
+=========
 
+  // 👇 links بعد اللوجين
+  const privateLinks = [
+    { path: '/upload', element: 'Home' },
+    { path: '/todo', element: 'To Do' },
+    { path: '/insights', element: 'Insights' },
+    { path: '/profile', element: 'Profile' },
+  ]
+
+>>>>>>>>> Temporary merge branch 2
   return (
     <div>
       <nav className="bg-[#FAF9F7] fixed w-full z-20 top-0 start-0">
