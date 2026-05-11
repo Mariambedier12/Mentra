@@ -13,18 +13,14 @@ export default function Navbar() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
 
-  // 👇 links قبل اللوجين
+  if (pathname.startsWith("/quiz")) return null;
+
   const publicLinks = [
     { path: '/', element: 'Home' },
     { path: '/features', element: 'Features' },
     { path: '/about', element: 'About Us' },
   ]
-<<<<<<<<< Temporary merge branch 1
-  if (pathname === "/quiz") return null;
-  
-=========
 
-  // 👇 links بعد اللوجين
   const privateLinks = [
     { path: '/upload', element: 'Home' },
     { path: '/todo', element: 'To Do' },
@@ -32,14 +28,12 @@ export default function Navbar() {
     { path: '/profile', element: 'Profile' },
   ]
 
->>>>>>>>> Temporary merge branch 2
   return (
     <div>
       <nav className="bg-[#FAF9F7] fixed w-full z-20 top-0 start-0">
 
         <div className="max-w-screen-xl flex items-center justify-between mx-auto py-3 px-1">
 
-          {/* LOGO */}
           <Link href="/" className="flex items-center">
             <Image src={logo} alt='logo' />
           </Link>
@@ -48,11 +42,8 @@ export default function Navbar() {
 
             <ul className="flex items-center space-x-16">
 
-              {/* 👇 لو اليوزر عامل login */}
               {status === "authenticated" ? (
                 <>
-
-                  {/* LOGOUT */}
                   <li>
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
@@ -72,14 +63,9 @@ export default function Navbar() {
                       </Link>
                     </li>
                   ))}
-
-
-
                 </>
               ) : (
                 <>
-
-                  {/* 👇 قبل اللوجين */}
                   {publicLinks.map(link => (
                     <li key={link.path}>
                       <Link
@@ -92,7 +78,6 @@ export default function Navbar() {
                   ))}
 
                   <div className="flex items-center space-x-3">
-
                     <li>
                       <Link href="/auth/login" className="login-btn cursor-pointer">
                         Login
@@ -104,7 +89,6 @@ export default function Navbar() {
                         Sign Up
                       </Link>
                     </li>
-
                   </div>
                 </>
               )}
