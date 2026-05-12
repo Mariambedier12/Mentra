@@ -7,7 +7,10 @@ import { useSession } from "next-auth/react";
 
 export const useQuiz = () => {
   const { data: session } = useSession();
-  const token = (session as any)?.accessToken;
+  const token = (session as any)?.user?.token;
+
+  console.log("session:", session);
+  console.log("token:", token);
 
   const [quizId, setQuizId] = useState<number>(1);
   const [questions, setQuestions] = useState<Question[]>([]);

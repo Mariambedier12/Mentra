@@ -27,22 +27,40 @@ export default function Login() {
   });
 
   async function onSubmit(data: loginSchemaForm) {
+  const res = await signIn("credentials", {
+    email: data.email,
+    password: data.password,
+    redirect: false,
+  });
 
-    const res = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
-
-    if (res?.error) {
-      toast.error("Incorrect email or password");
-      return;
-    }
-
-    toast.success("Login successful!");
-
-    router.push("/");
+  if (res?.error) {
+    toast.error("Incorrect email or password");
+    return;
   }
+
+  toast.success("Login successful!");
+
+  // نجيب الـ session الجديدة عشان ناخد الـ token
+  const { getSession } = await import("next-auth/react");
+  const session = await getSession();
+  const token = (session as any)?.user?.token;
+
+  // نشيك على الـ level
+  try {
+    const levelRes = await fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const levelData = await levelRes.json();
+
+    if (levelData.level) {
+      router.push("/upload");
+    } else {
+      router.push("/quiz");
+    }
+  } catch {
+    router.push("/quiz");
+  }
+}
 
   return (
     <div className='bg-[#091A58] min-h-screen flex flex-col'>

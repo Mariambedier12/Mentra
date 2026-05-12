@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { QuizResult as QuizResultType } from "../types/quiz";
 
 interface Props {
@@ -16,16 +19,17 @@ const levelConfig = {
   Moderate: {
     color: "#fde68a",
     textColor: "#92400e",
-    description: "You show moderate ADHD-related patterns. Structured tools and strategies can make a big difference.",
+    description: "You may face noticeable focus challenges, but with consistent strategies, you can improve your productivity.",
   },
   Severe: {
     color: "#fca5a5",
     textColor: "#991b1b",
-    description: "Your responses suggest significant ADHD-related challenges. We recommend consulting a healthcare professional.",
+    description: "You may struggle with focus often, and strong support can help you stay in control.",
   },
 };
 
 export const QuizResult = ({ result, onRestart }: Props) => {
+  const router = useRouter();
   const percentage = Math.round((result.score / result.totalQuestions) * 100);
 
   const level: Level = percentage < 40 ? "Mild" : percentage < 70 ? "Moderate" : "Severe";
@@ -34,15 +38,12 @@ export const QuizResult = ({ result, onRestart }: Props) => {
   return (
     <div style={{ width: "100%", maxWidth: "780px", margin: "0 auto", paddingTop: "3rem" }}>
 
-      {/* Title */}
       <h1 style={{ fontSize: "32px", fontWeight: 700, color: "#1f2937", textAlign: "center", marginBottom: "2rem" }}>
         Your ADHD Level: {level}
       </h1>
 
-      {/* Card */}
       <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem", marginBottom: "1.5rem" }}>
 
-        {/* Level Tabs */}
         <div style={{ display: "flex", background: "#f3f4f6", borderRadius: "99px", padding: "4px", marginBottom: "2rem" }}>
           {(["Mild", "Moderate", "Severe"] as Level[]).map((l) => (
             <div
@@ -64,14 +65,13 @@ export const QuizResult = ({ result, onRestart }: Props) => {
           ))}
         </div>
 
-        {/* Description */}
         <p style={{ textAlign: "center", fontSize: "15px", color: "#4b5563", lineHeight: 1.7, marginBottom: "2rem", maxWidth: "520px", margin: "0 auto 2rem" }}>
           {config.description}
         </p>
 
-        {/* Button */}
         <div style={{ textAlign: "center" }}>
           <button
+            onClick={() => router.push("/upload")}
             onMouseEnter={(e) => (e.currentTarget.style.background = "#1a3a8f")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "#0f1f5c")}
             style={{
@@ -94,7 +94,6 @@ export const QuizResult = ({ result, onRestart }: Props) => {
 
       </div>
 
-      {/* Feature Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
         <div style={{ background: "#f9fafb", borderRadius: "12px", padding: "1.5rem", border: "1px solid #e5e7eb" }}>
           <div style={{ fontSize: "20px", marginBottom: "0.5rem" }}>💡</div>

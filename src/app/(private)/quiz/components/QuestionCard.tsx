@@ -58,14 +58,14 @@ export const QuestionCard = ({
         </h2>
 
         <div className="flex flex-col gap-3">
-          {question.options.map((option) => (
+          {question.answers.map((answer) => (
             <AnswerOption
-              key={option.id}
-              option={option}
-              isSelected={Number(selectedAnswer) === Number(option.id)}
+              key={answer.id}
+              option={answer}
+              isSelected={Number(selectedAnswer) === Number(answer.id)}
               onSelect={onSelect}
             />
-          ))}
+           ))}
         </div>
 
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "2rem", paddingTop: "1.5rem" }}>

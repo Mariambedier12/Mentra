@@ -68,7 +68,7 @@ export default function Page() {
         toast.success('Account created successfully!');
 
         setTimeout(() => {
-          router.push('/auth/login');
+          router.push('/quiz');
         }, 1000);
 
       } else {
