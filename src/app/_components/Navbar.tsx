@@ -13,6 +13,10 @@ export default function Navbar() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
 
+ 
+   /*Authentication Flash*/
+  /*if (status === "loading") return null;*/
+
   if (pathname.startsWith("/quiz")) return null;
 
   const publicLinks = [
