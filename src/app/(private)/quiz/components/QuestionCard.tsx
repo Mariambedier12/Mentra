@@ -23,7 +23,6 @@ export const QuestionCard = ({
   return (
     <div className="w-full max-w-3xl mx-auto">
 
-      {/* Header */}
       <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#111827", marginBottom: "0.5rem" }}>
           Quiz
@@ -33,24 +32,22 @@ export const QuestionCard = ({
         </p>
       </div>
 
-      {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between text-sm text-gray-500 mb-2">
           <span>STEP {questionNumber} OF {totalQuestions}</span>
           <span>{Math.round(progress)}% Complete</span>
         </div>
-       <div style={{ height: "6px", background: "#e5e7eb", borderRadius: "99px", overflow: "hidden" }}>
-       <div style={{
-         height: "100%",
-         width: `${progress}%`,
-         background: "#4338ca",
-         borderRadius: "99px",
-         transition: "width 0.4s ease",
-       }} />
-      </div>
+        <div style={{ height: "6px", background: "#e5e7eb", borderRadius: "99px", overflow: "hidden" }}>
+          <div style={{
+            height: "100%",
+            width: `${progress}%`,
+            background: "#4338ca",
+            borderRadius: "99px",
+            transition: "width 0.4s ease",
+          }} />
+        </div>
       </div>
 
-      {/* Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-8">
         <p className="text-sm text-gray-500 mb-3 font-medium">Question {questionNumber}</p>
         <h2 className="text-lg font-semibold text-gray-900 mb-8 leading-relaxed">
@@ -58,7 +55,6 @@ export const QuestionCard = ({
         </h2>
 
         <div className="flex flex-col gap-3">
-<<<<<<< Updated upstream
           {question.answers.map((answer) => (
             <AnswerOption
               key={answer.id}
@@ -66,19 +62,8 @@ export const QuestionCard = ({
               isSelected={Number(selectedAnswer) === Number(answer.id)}
               onSelect={onSelect}
             />
-           ))}
+          ))}
         </div>
-=======
-         {question.answers.map((answer) => (
-           <AnswerOption
-             key={answer.id}
-             option={answer}
-             isSelected={Number(selectedAnswer) === Number(answer.id)}
-             onSelect={onSelect}
-           />
-         ))}
-       </div>
->>>>>>> Stashed changes
 
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "2rem", paddingTop: "1.5rem" }}>
           <button

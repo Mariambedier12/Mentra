@@ -20,25 +20,23 @@ export default function UploadPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => {
-        setUserName(data.displayName || data.userName || "");
-      })
-      .catch(() => {
-        setUserName((session as any)?.user?.name || "");
-      });
+      .then((data) => setUserName(data.displayName || data.userName || ""))
+      .catch(() => setUserName((session as any)?.user?.name || ""));
 
     fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
-        if (!data.level) {
-          window.location.href = "/quiz";
-        } else {
-          setAdhdLevel(data.level);
-        }
+        if (!data.level) window.location.href = "/quiz";
+        else setAdhdLevel(data.level);
       });
   }, [session]);
+
+  const mockHistory = [
+    { name: "Cognitive Psychology.pdf", date: "Today", id: 1 },
+    { name: "Neuroscience Basics.pdf", date: "Yesterday", id: 2 },
+  ];
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>
@@ -52,7 +50,7 @@ export default function UploadPage() {
         </p>
 
         <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem", marginBottom: "2rem" }}>
-          <p style={{ fontSize: "13px", fontWeight: 600, color: "#4338ca", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "8px" }}>
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "#4338ca", marginBottom: "1.5rem" }}>
             📅 TODAY'S PLAN
           </p>
 
@@ -82,18 +80,15 @@ export default function UploadPage() {
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
-
                 const token = (session as any)?.user?.token;
                 const formData = new FormData();
                 formData.append("file", file);
-
                 try {
                   const res = await fetch("http://mentraa.runasp.net/api/Document/upload", {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` },
                     body: formData,
                   });
-
                   if (res.ok) {
                     const data = await res.json();
                     setUploadedFile(file.name);
@@ -110,16 +105,7 @@ export default function UploadPage() {
             {!uploadedFile && (
               <button
                 onClick={() => document.getElementById("file-upload")?.click()}
-                style={{
-                  background: "#0f1f5c",
-                  color: "white",
-                  padding: "0.75rem 2rem",
-                  borderRadius: "99px",
-                  fontSize: "14px",
-                  fontWeight: 500,
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                style={{ background: "#0f1f5c", color: "white", padding: "0.75rem 2rem", borderRadius: "99px", fontSize: "14px", fontWeight: 500, border: "none", cursor: "pointer" }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#1a3a8f")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#0f1f5c")}
               >
@@ -130,15 +116,7 @@ export default function UploadPage() {
             {uploadedFile && (
               <button
                 onClick={() => { setUploadedFile(null); setDocumentId(null); }}
-                style={{
-                  background: "transparent",
-                  color: "#ef4444",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "99px",
-                  fontSize: "13px",
-                  border: "1px solid #ef4444",
-                  cursor: "pointer",
-                }}
+                style={{ background: "transparent", color: "#ef4444", padding: "0.5rem 1rem", borderRadius: "99px", fontSize: "13px", border: "1px solid #ef4444", cursor: "pointer" }}
               >
                 Remove
               </button>
@@ -146,7 +124,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <button
             disabled={!uploadedFile}
             onClick={() => router.push(`/study-session?documentId=${documentId}`)}
@@ -171,6 +149,33 @@ export default function UploadPage() {
           <p style={{ fontSize: "14px", color: "#9ca3af", marginTop: "0.75rem" }}>
             Start learning now
           </p>
+        </div>
+
+        {/* Session History */}
+        <div style={{ marginTop: "1rem" }}>
+          <p style={{ fontSize: "14px", fontWeight: 600, color: "#6b7280", marginBottom: "1rem" }}>
+            Previous Sessions
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {mockHistory.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => router.push(`/study-session?documentId=${item.id}`)}
+                style={{ background: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", transition: "border-color 0.15s ease" }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4338ca")}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "20px" }}>📄</span>
+                  <div>
+                    <p style={{ fontSize: "14px", fontWeight: 500, color: "#1f2937" }}>{item.name}</p>
+                    <p style={{ fontSize: "12px", color: "#9ca3af" }}>{item.date}</p>
+                  </div>
+                </div>
+                <span style={{ fontSize: "14px", color: "#4338ca", fontWeight: 500 }}>Continue →</span>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>

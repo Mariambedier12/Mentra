@@ -3,7 +3,7 @@ interface Props {
   isRunning: boolean;
   onToggle: () => void;
   onReset: () => void;
-  onEnd: () => void;
+  onEnd: () => Promise<void>;
 }
 
 export default function Timer({ time, isRunning, onToggle, onReset, onEnd }: Props) {

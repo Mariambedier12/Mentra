@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import img from '../../../../../assets/signup.png'
 import person from '../../../../../assets/person.png'
@@ -16,6 +17,8 @@ import { toast } from 'react-toastify'
 import { checkEmailExists } from '../../services/auth.service';
 
 import { registerSchema, registerSchemaForm } from '@/schema/register.schema';
+
+
 
 export default function Page() {
 
@@ -65,13 +68,18 @@ export default function Page() {
       console.log("REGISTER RESPONSE:", result);
 
       if (res.ok) {
-        toast.success('Account created successfully!');
+  toast.success('Account created successfully!');
 
-        setTimeout(() => {
-          router.push('/quiz');
-        }, 1000);
+  await signIn("credentials", {
+    email: data.email,
+    password: data.password,
+    redirect: false,
+  });
 
-      } else {
+  setTimeout(() => {
+    router.push('/quiz');
+  }, 1000);
+} else {
         toast.error(result.message || 'Registration failed');
       }
 

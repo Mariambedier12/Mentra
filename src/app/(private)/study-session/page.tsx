@@ -10,14 +10,15 @@ import SummaryTab from "./components/summary-tab";
 export default function StudySessionPage() {
   const router = useRouter();
   const {
-    formattedTime,
-    isRunning,
-    toggle,
-    reset,
-    activeTab,
-    setActiveTab,
-    progress,
-    sessionData,
+  formattedTime,
+  isRunning,
+  toggle,
+  reset,
+  endSession,
+  activeTab,
+  setActiveTab,
+  progress,
+  sessionData,
   } = useStudySession();
 
   return (
@@ -33,7 +34,7 @@ export default function StudySessionPage() {
           isRunning={isRunning}
           onToggle={toggle}
           onReset={reset}
-          onEnd={() => router.push("/upload")}
+          onEnd={async () => { await endSession(); router.push("/upload"); }}
         />
 
         <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
