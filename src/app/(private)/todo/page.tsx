@@ -100,7 +100,7 @@ export default function TodoPage() {
         <div
           className="
             overflow-hidden
-            rounded-[32px]
+            rounded-[10px]
             bg-white
             shadow-sm
             grid

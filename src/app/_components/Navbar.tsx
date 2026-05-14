@@ -13,8 +13,8 @@ export default function Navbar() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
 
- 
-   /*Authentication Flash*/
+
+  /*Authentication Flash*/
   /*if (status === "loading") return null;*/
 
   if (pathname.startsWith("/quiz")) return null;
@@ -48,14 +48,7 @@ export default function Navbar() {
 
               {status === "authenticated" ? (
                 <>
-                  <li>
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="login-btn cursor-pointer"
-                    >
-                      Logout
-                    </button>
-                  </li>
+
 
                   {privateLinks.map(link => (
                     <li key={link.path}>

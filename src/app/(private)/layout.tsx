@@ -1,5 +1,5 @@
 import Footer from "../_components/Footer";
-import ReminderWatcher from "./_components/ReminderWatcher";
+// import ReminderWatcher from "./_components/ReminderWatcher";
 
 
 export default function PrivateLayout({
@@ -9,7 +9,7 @@ export default function PrivateLayout({
 }) {
   return (
     <>
-      <ReminderWatcher />
+      {/* <ReminderWatcher /> */}
       {children}
       <Footer variant="small" />
     </>

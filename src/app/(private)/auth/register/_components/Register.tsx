@@ -17,6 +17,9 @@ import { checkEmailExists } from '../../services/auth.service';
 
 import { registerSchema, registerSchemaForm } from '@/schema/register.schema';
 
+import { signIn } from "next-auth/react";
+
+
 export default function Page() {
 
   const router = useRouter();
@@ -49,8 +52,6 @@ export default function Page() {
       };
 
 
-
-
       // ✅ FIX: direct backend API (NOT /api/register)
       const res = await fetch('http://mentraa.runasp.net/api/Auth/register', {
         method: 'POST',
@@ -67,9 +68,20 @@ export default function Page() {
       if (res.ok) {
         toast.success('Account created successfully!');
 
-        setTimeout(() => {
-          router.push('/quiz');
-        }, 1000);
+        // ✅ عمل login تلقائي بعد الـ register
+        const signInRes = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+
+        if (signInRes?.ok) {
+          setTimeout(() => {
+            router.push('/quiz'); // أول مرة دايماً على الكويز
+          }, 1000);
+        } else {
+          router.push('/auth/login'); // لو فشل الـ auto login يرجع يلوج يدوي
+        }
 
       } else {
         toast.error(result.message || 'Registration failed');
