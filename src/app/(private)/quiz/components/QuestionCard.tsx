@@ -58,6 +58,7 @@ export const QuestionCard = ({
         </h2>
 
         <div className="flex flex-col gap-3">
+<<<<<<< Updated upstream
           {question.answers.map((answer) => (
             <AnswerOption
               key={answer.id}
@@ -67,6 +68,17 @@ export const QuestionCard = ({
             />
            ))}
         </div>
+=======
+         {question.answers.map((answer) => (
+           <AnswerOption
+             key={answer.id}
+             option={answer}
+             isSelected={Number(selectedAnswer) === Number(answer.id)}
+             onSelect={onSelect}
+           />
+         ))}
+       </div>
+>>>>>>> Stashed changes
 
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "2rem", paddingTop: "1.5rem" }}>
           <button
