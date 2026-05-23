@@ -46,7 +46,9 @@ export default function Navbar() {
 
             <ul className="flex items-center space-x-16">
 
-              {status === "authenticated" ? (
+              {status === "loading" ? (
+                <div className="h-9 w-48" />
+              ) : status === "authenticated" ? (
                 <>
 
 
@@ -58,8 +60,27 @@ export default function Navbar() {
                       >
                         {link.element}
                       </Link>
+
+
+
                     </li>
+
+
                   ))}
+
+                  <li>
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="login-btn cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </li>
+
+
+
+
+
                 </>
               ) : (
                 <>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import imgl from "@/assets/signup.png";
 
@@ -10,8 +10,9 @@ import eyeClosed from "@/assets/closedeye.png";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
+import FadeLoader from "@/components/ui/FadeLoader";
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -212,5 +213,13 @@ export default function ResetPassword() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div className="bg-[#091A58] min-h-screen flex items-center justify-center"><FadeLoader color="#ffffff" /></div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

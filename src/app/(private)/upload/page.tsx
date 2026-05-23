@@ -2,9 +2,11 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function UploadPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const userName = (session as any)?.user?.name || "there";
   const [adhdLevel, setAdhdLevel] = useState("...");
 
@@ -18,12 +20,12 @@ useEffect(() => {
     .then((res) => res.json())
     .then((data) => {
       if (!data.level) {
-        window.location.href = "/quiz";
+        router.push("/quiz");
       } else {
         setAdhdLevel(data.level);
       }
     });
-}, [session]);
+}, [session, router]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>

@@ -1,18 +1,9 @@
-import { getSession } from "next-auth/react";
-
 const BASE_URL = "http://mentraa.runasp.net/api/User";
-
-async function getToken() {
-  const session = await getSession();
-  return (session?.user as any)?.token;
-}
 
 /**
  * GET PROFILE
  */
-export async function getProfile() {
-  const token = await getToken();
-
+export async function getProfile(token: string) {
   const res = await fetch(`${BASE_URL}/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +11,9 @@ export async function getProfile() {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to get profile");
+    const errorText = await res.text().catch(() => "");
+    console.error("getProfile error res:", res.status, errorText);
+    throw new Error(`Failed to get profile (Status: ${res.status})`);
   }
 
   return res.json();
@@ -29,11 +22,8 @@ export async function getProfile() {
 /**
  * UPLOAD PHOTO
  */
-export async function uploadPhoto(file: File) {
-  const token = await getToken();
-
+export async function uploadPhoto(file: File, token: string) {
   const formData = new FormData();
-
   formData.append("file", file);
 
   const res = await fetch(`${BASE_URL}/upload-photo`, {
@@ -49,4 +39,24 @@ export async function uploadPhoto(file: File) {
   }
 
   return res.json();
+}
+
+/**
+ * GET ADHD LEVEL
+ */
+export async function getAdhdLevel(token: string) {
+  if (!token) return null;
+
+  const res = await fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const data = await res.json();
+  return data.level;
 }

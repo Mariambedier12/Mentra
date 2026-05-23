@@ -5,6 +5,7 @@ import FocusTimeCard from "./components/focus-time-card";
 import WeeklyActivityCard from "./components/weekly-activity-card";
 import ProductiveTimeCard from "./components/productive-time-card";
 import WeeklySessionsCard from "./components/weekly-sessions-card";
+import FadeLoader from "@/components/ui/FadeLoader";
 
 export default function InsightsPage() {
   const { insights, loading } = useInsights();
@@ -12,7 +13,7 @@ export default function InsightsPage() {
   if (loading || !insights || !insights.weeklyActivity) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", color: "#9ca3af" }}>
-        Loading...
+        <FadeLoader />
       </div>
     );
   }

@@ -1,64 +1,101 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 import ProfileCard from "./_components/profileCard";
 import ProfileForm from "./_components/profileForm";
+import FadeLoader from "@/components/ui/FadeLoader";
 
 import {
   getProfile,
   uploadPhoto,
+  getAdhdLevel,
 } from "./_services/profile.service";
 
 export default function ProfilePage() {
 
+  const { data: session, status } = useSession();
+  const token = (session?.user as any)?.token;
+
   const [profile, setProfile] = useState<any>(null);
+  const [adhdLevel, setAdhdLevel] = useState<string>("Loading...");
+  const [error, setError] = useState<string | null>(null);
 
   async function fetchProfile() {
     try {
 
-      const data = await getProfile();
+      console.log("TOKEN:", token); // ← زود السطر ده
+      console.log("STATUS:", status); // ← والسطر
+
+      setError(null);
+      const data = await getProfile(token);
 
       console.log("PROFILE:", data);
-
       setProfile(data);
 
-    } catch (err) {
-      console.log(err);
+      try {
+        const level = await getAdhdLevel(token);
+        setAdhdLevel(level ? (level.toLowerCase().includes("adhd") ? level : `${level} ADHD`) : "Not Tested");
+      } catch (levelErr) {
+        console.error("Error fetching ADHD level:", levelErr);
+        setAdhdLevel("Not Tested");
+      }
+
+    } catch (err: any) {
+      console.error("Error fetching profile:", err);
+      setError(err?.message || "Failed to load profile");
     }
   }
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (status === "authenticated") {
+      fetchProfile();
+    }
+  }, [status]);
 
   async function handleUpload(file: File) {
     try {
-
-      await uploadPhoto(file);
-
+      await uploadPhoto(file, token);
       await fetchProfile();
-
     } catch (err) {
       console.log(err);
     }
   }
 
-  console.log(profile);
+  if (status === "loading") {
+    return (
+      <div className="bg-[#FAF9F7] min-h-screen flex items-center justify-center">
+        <FadeLoader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-[#FAF9F7] min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-red-500 font-semibold text-lg">Error: {error}</p>
+        <button
+          onClick={fetchProfile}
+          className="bg-[#091A58] text-white px-6 py-2.5 rounded-full font-semibold hover:opacity-95 transition cursor-pointer"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   if (!profile) {
     return (
       <div className="bg-[#FAF9F7] min-h-screen flex items-center justify-center">
-        Loading...
+        <FadeLoader />
       </div>
     );
   }
 
   return (
     <div className="bg-[#FAF9F7] min-h-screen pt-32 pb-16 px-6">
-
       <div className="max-w-[1050px] mx-auto">
-
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-16 items-start">
 
           {/* LEFT */}
@@ -70,7 +107,7 @@ export default function ProfilePage() {
                 ? `http://mentraa.runasp.net${profile.profilePicturePath}`
                 : undefined
             }
-            adhdLevel={profile.adhdLevel || "Severe ADHD"}
+            adhdLevel={adhdLevel}
             onImageChange={handleUpload}
           />
 
@@ -81,9 +118,7 @@ export default function ProfilePage() {
           />
 
         </div>
-
       </div>
-
     </div>
   );
 }

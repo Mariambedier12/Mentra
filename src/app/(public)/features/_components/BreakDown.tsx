@@ -12,7 +12,7 @@ export default function Breakdown() {
 
         {/* TEXT */}
         <div>
-          <h2 className="text-3xl md:text-5xl font-bold text-[#1E1E1E] leading-tight">
+          <h2 className="text-2xl md:text-5xl font-bold text-[#1E1E1E] leading-tight">
             Break Down the <br /> Overwhelming
           </h2>
 

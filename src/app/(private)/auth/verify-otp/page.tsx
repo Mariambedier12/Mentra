@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import imgl from "@/assets/signup.png";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
+import FadeLoader from "@/components/ui/FadeLoader";
 
-export default function VerifyOtp() {
+function VerifyOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -222,5 +223,13 @@ export default function VerifyOtp() {
 
       </section>
     </div>
+  );
+}
+
+export default function VerifyOtp() {
+  return (
+    <Suspense fallback={<div className="bg-[#091A58] min-h-screen flex items-center justify-center"><FadeLoader color="#ffffff" /></div>}>
+      <VerifyOtpContent />
+    </Suspense>
   );
 }
