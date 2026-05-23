@@ -1,21 +1,9 @@
-import { getSession } from "next-auth/react";
-
 const BASE_URL = "http://mentraa.runasp.net/api/Todo";
-
-/**
- * GET TOKEN من NextAuth
- */
-async function getToken() {
-  const session = await getSession();
-  return (session?.user as any)?.token;
-}
 
 /**
  * GET TODOS
  */
-export async function getTodos() {
-  const token = await getToken();
-
+export async function getTodos(token: string) {
   const res = await fetch(BASE_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -28,13 +16,14 @@ export async function getTodos() {
 /**
  * ADD TODO
  */
-export async function addTodo(data: {
-  title: string;
-  description: string;
-  dueDate: string;
-}) {
-  const token = await getToken();
-
+export async function addTodo(
+  data: {
+    title: string;
+    description: string;
+    dueDate: string;
+  },
+  token: string
+) {
   const res = await fetch(BASE_URL, {
     method: "POST",
     headers: {
@@ -50,9 +39,7 @@ export async function addTodo(data: {
 /**
  * TOGGLE TODO
  */
-export async function toggleTodo(id: number) {
-  const token = await getToken();
-
+export async function toggleTodo(id: number, token: string) {
   const res = await fetch(`${BASE_URL}/${id}/toggle`, {
     method: "PUT",
     headers: {
@@ -69,9 +56,7 @@ export async function toggleTodo(id: number) {
 /**
  * DELETE TODO
  */
-export async function deleteTodo(id: number) {
-  const token = await getToken();
-
+export async function deleteTodo(id: number, token: string) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
     headers: {
@@ -84,3 +69,18 @@ export async function deleteTodo(id: number) {
 
   return true;
 }
+
+/**
+ * GET TOMORROW REMINDER
+ */
+export async function getTomorrowReminder(token: string) {
+  const res = await fetch(`${BASE_URL}/tomorrow-reminder`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch tomorrow reminders");
+
+  return res.json();
+}

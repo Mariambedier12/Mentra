@@ -10,13 +10,18 @@ export const useInsights = () => {
   const { data: session, status } = useSession();
   const token = (session as any)?.user?.token;
   const [insights, setInsights] = useState<InsightsData>(mockInsights);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (status === "loading") {
+      setLoading(true);
+      return;
+    }
     
+    setLoading(true);
     fetchWeeklySummary(token || "").then((data) => {
       setInsights(data);
+      setLoading(false);
     });
   }, [token, status]);
 

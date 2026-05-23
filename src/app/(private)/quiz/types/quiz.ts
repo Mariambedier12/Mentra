@@ -1,13 +1,17 @@
 export interface Answer {
   id: number;
   text: string;
-  score: number;
+  score?: number;
 }
+
+export type Option = Answer;
+
 
 export interface Question {
   id: number;
   text: string;
-  answers: Answer[];
+  answers?: Answer[];
+  options?: Option[];
 }
 
 export interface QuizData {
@@ -23,4 +27,6 @@ export interface SubmitPayload {
 
 export interface QuizResult {
   level: string;
+  score: number;
+  totalQuestions: number;
 }

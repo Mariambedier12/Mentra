@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useQuiz } from "../hooks/useQuiz";
 import { QuestionCard } from "./QuestionCard";
 import { QuizResult } from "./QuizResult";
 import ReadyScreen from "./ready-screen";
+import FadeLoader from "@/components/ui/FadeLoader";
 
 export const QuizContainer = () => {
   const [stage, setStage] = useState<"ready" | "quiz" | "result">("ready");
-  const { status } = useSession();
 
   const {
     questions,
@@ -23,17 +22,12 @@ export const QuizContainer = () => {
     goNext,
   } = useQuiz();
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen text-gray-400">
-        Loading...
+        <FadeLoader />
       </div>
     );
-  }
-
-  if (status === "unauthenticated") {
-    window.location.href = "/auth/login";
-    return null;
   }
 
   if (stage === "ready") {

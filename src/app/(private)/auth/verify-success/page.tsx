@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import successIcon from "@/assets/successicon.png";
 import { useRouter, useSearchParams } from "next/navigation";
+import FadeLoader from "@/components/ui/FadeLoader";
 
-export default function VerifySuccess() {
+function VerifySuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -50,5 +51,13 @@ export default function VerifySuccess() {
 
       </div>
     </div>
+  );
+}
+
+export default function VerifySuccess() {
+  return (
+    <Suspense fallback={<div className="bg-[#FAF9F7] min-h-screen flex items-center justify-center"><FadeLoader /></div>}>
+      <VerifySuccessContent />
+    </Suspense>
   );
 }

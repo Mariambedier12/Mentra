@@ -209,7 +209,7 @@ export default function Page() {
 
                 {/* CHECKBOX */}
                 <div className="flex items-start gap-2">
-                  <input type="checkbox" className="mt-1 w-4 h-4" required />
+                  <input type="checkbox" className="mt-1 w-4 h-4 cursor-pointer" required />
                   <p className="text-sm text-[#404043]">
                     I agree to the{" "}
                     <span className="text-[#5690D1] font-semibold cursor-pointer">
