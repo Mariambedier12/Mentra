@@ -4,6 +4,12 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+interface HistoryItem {
+  id: number;
+  fileName: string;
+  uploadedAt: string;
+}
+
 export default function UploadPage() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -11,6 +17,15 @@ export default function UploadPage() {
   const [adhdLevel, setAdhdLevel] = useState("...");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [documentId, setDocumentId] = useState<number | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  const fetchHistory = (token: string) => {
+    fetch("http://mentraa.runasp.net/api/Document/history", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setHistory(Array.isArray(data) ? data : []));
+  };
 
   useEffect(() => {
     const token = (session as any)?.user?.token;
@@ -31,16 +46,24 @@ export default function UploadPage() {
         if (!data.level) window.location.href = "/quiz";
         else setAdhdLevel(data.level);
       });
+
+    fetchHistory(token);
   }, [session]);
 
-  const mockHistory = [
-    { name: "Cognitive Psychology.pdf", date: "Today", id: 1 },
-    { name: "Neuroscience Basics.pdf", date: "Yesterday", id: 2 },
-  ];
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return "Today";
+    if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+    return date.toLocaleDateString();
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>
-      <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 4rem 2rem" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937", marginBottom: "0.25rem" }}>
           Hello, {userName}!
@@ -93,6 +116,7 @@ export default function UploadPage() {
                     const data = await res.json();
                     setUploadedFile(file.name);
                     setDocumentId(data.id || data.documentId || 1);
+                    fetchHistory(token);
                   } else {
                     alert("Upload failed, please try again.");
                   }
@@ -151,32 +175,33 @@ export default function UploadPage() {
           </p>
         </div>
 
-        {/* Session History */}
-        <div style={{ marginTop: "1rem" }}>
-          <p style={{ fontSize: "14px", fontWeight: 600, color: "#6b7280", marginBottom: "1rem" }}>
-            Previous Sessions
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {mockHistory.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => router.push(`/study-session?documentId=${item.id}`)}
-                style={{ background: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", transition: "border-color 0.15s ease" }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4338ca")}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <span style={{ fontSize: "20px" }}>📄</span>
-                  <div>
-                    <p style={{ fontSize: "14px", fontWeight: 500, color: "#1f2937" }}>{item.name}</p>
-                    <p style={{ fontSize: "12px", color: "#9ca3af" }}>{item.date}</p>
+        {history.length > 0 && (
+          <div style={{ marginTop: "1rem" }}>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: "#6b7280", marginBottom: "1rem" }}>
+              Previous Sessions
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {history.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => router.push(`/study-session?documentId=${item.id}`)}
+                  style={{ background: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1rem 1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", transition: "border-color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4338ca")}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <span style={{ fontSize: "20px" }}>📄</span>
+                    <div>
+                      <p style={{ fontSize: "14px", fontWeight: 500, color: "#1f2937" }}>{item.fileName}</p>
+                      <p style={{ fontSize: "12px", color: "#9ca3af" }}>{formatDate(item.uploadedAt)}</p>
+                    </div>
                   </div>
+                  <span style={{ fontSize: "14px", color: "#4338ca", fontWeight: 500 }}>Continue →</span>
                 </div>
-                <span style={{ fontSize: "14px", color: "#4338ca", fontWeight: 500 }}>Continue →</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>

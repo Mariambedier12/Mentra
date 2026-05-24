@@ -6,19 +6,21 @@ import Timer from "./components/timer";
 import TabBar from "./components/tab-bar";
 import SessionProgress from "./components/session-progress";
 import SummaryTab from "./components/summary-tab";
+import HighlightTab from "./components/highlight-tab";
+import QuizTab from "./components/quiz-tab";
 
 export default function StudySessionPage() {
   const router = useRouter();
   const {
-  formattedTime,
-  isRunning,
-  toggle,
-  reset,
-  endSession,
-  activeTab,
-  setActiveTab,
-  progress,
-  sessionData,
+    formattedTime,
+    isRunning,
+    toggle,
+    reset,
+    endSession,
+    activeTab,
+    setActiveTab,
+    progress,
+    sessionData,
   } = useStudySession();
 
   return (
@@ -42,16 +44,8 @@ export default function StudySessionPage() {
         <SessionProgress progress={progress} />
 
         {activeTab === "summary" && <SummaryTab data={sessionData} />}
-        {activeTab === "highlight" && (
-          <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem", textAlign: "center", color: "#9ca3af" }}>
-            Highlight coming soon...
-          </div>
-        )}
-        {activeTab === "quiz" && (
-          <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem", textAlign: "center", color: "#9ca3af" }}>
-            Quiz Me coming soon...
-          </div>
-        )}
+        {activeTab === "highlight" && <HighlightTab data={sessionData} />}
+        {activeTab === "quiz" && <QuizTab data={sessionData} />}
 
       </div>
     </div>

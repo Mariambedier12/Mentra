@@ -8,36 +8,35 @@ import { mockSession } from "../data/mock-session";
 
 const BASE_URL = "http://mentraa.runasp.net";
 
-const levelDuration: Record<string, number> = {
-  "Mild": 40 * 60,
-  "Mild ADHD": 40 * 60,
-  "Moderate": 30 * 60,
-  "Moderate ADHD": 30 * 60,
-  "Severe": 20 * 60,
-  "Severe ADHD": 20 * 60,
-};
-
 export const useStudySession = () => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const documentId = Number(searchParams.get("documentId")) || 1;
   const token = (session as any)?.user?.token;
 
-  const [adhdLevel, setAdhdLevel] = useState("Mild");
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");
   const [sessionData] = useState<SessionData>(mockSession);
+  const [totalTime, setTotalTime] = useState(40 * 60);
+  const [timeLeft, setTimeLeft] = useState(40 * 60);
+  const [isRunning, setIsRunning] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // جيب الـ level وابدأ الـ session
   useEffect(() => {
     if (!token) return;
 
-    // جيب الـ level
-    fetch(`${BASE_URL}/api/Quiz/my-level`, {
+    // جيب الـ study settings
+    fetch(`${BASE_URL}/api/Quiz/study-settings`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => { if (data.level) setAdhdLevel(data.level); });
+      .then((data) => {
+        if (data.studyTime) {
+          const secs = data.studyTime * 60;
+          setTotalTime(secs);
+          setTimeLeft(secs);
+        }
+      });
 
     // ابدأ الـ session
     fetch(`${BASE_URL}/api/Insights/start-session`, {
@@ -52,15 +51,6 @@ export const useStudySession = () => {
       .then((data) => { if (data.sessionId) setSessionId(data.sessionId); });
 
   }, [token]);
-
-  const totalTime = levelDuration[adhdLevel] || 40 * 60;
-  const [timeLeft, setTimeLeft] = useState(totalTime);
-  const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    setTimeLeft(totalTime);
-  }, [totalTime]);
 
   useEffect(() => {
     if (isRunning) {
