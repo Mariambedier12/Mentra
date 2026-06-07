@@ -16,7 +16,7 @@ export const useStudySession = () => {
 
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");
-  const [sessionData] = useState<SessionData>(mockSession);
+  const [sessionData, setSessionData] = useState<SessionData>(mockSession);
   const [totalTime, setTotalTime] = useState(40 * 60);
   const [timeLeft, setTimeLeft] = useState(40 * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -25,7 +25,6 @@ export const useStudySession = () => {
   useEffect(() => {
     if (!token) return;
 
-    // جيب الـ study settings
     fetch(`${BASE_URL}/api/Quiz/study-settings`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -38,7 +37,6 @@ export const useStudySession = () => {
         }
       });
 
-    // ابدأ الـ session
     fetch(`${BASE_URL}/api/Insights/start-session`, {
       method: "POST",
       headers: {
@@ -49,6 +47,30 @@ export const useStudySession = () => {
     })
       .then((res) => res.json())
       .then((data) => { if (data.sessionId) setSessionId(data.sessionId); });
+
+    // جيب الـ summary من الـ API
+    fetch(`${BASE_URL}/api/Document/summary/${documentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.summary) return;
+        try {
+          const parsed = typeof data.summary === "string" ? JSON.parse(data.summary) : data.summary;
+          if (parsed.summary && !parsed.summary.includes("Could not connect")) {
+            setSessionData({
+              ...mockSession,
+              summary: {
+                title: "Core Concepts",
+                points: parsed.keyPoints?.map((kp: string) => ({
+                  heading: "",
+                  text: kp,
+                })) || mockSession.summary.points,
+              },
+            });
+          }
+        } catch { }
+      });
 
   }, [token]);
 
