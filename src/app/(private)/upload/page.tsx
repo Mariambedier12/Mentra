@@ -171,7 +171,7 @@ export default function UploadPage() {
             Start Session ▶
           </button>
           <p style={{ fontSize: "14px", color: "#9ca3af", marginTop: "0.75rem" }}>
-            Start learning now
+            Start your learning journey now
           </p>
         </div>
 
