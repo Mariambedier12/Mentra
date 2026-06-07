@@ -16,6 +16,7 @@ export const submitQuiz = async (payload: SubmitPayload, token: string) => {
     },
     body: JSON.stringify(payload),
   });
+
   return res.json();
 };
 

@@ -17,6 +17,7 @@ export const useInsights = () => {
 
     fetchWeeklySummary(token).then((data) => {
       setInsights(data);
+      setLoading(false);
     });
   }, [token, status]);
 

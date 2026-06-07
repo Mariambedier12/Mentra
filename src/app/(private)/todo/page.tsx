@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 import CalendarSection from "./_components/CalendarSection";
 import AddTaskForm from "./_components/AddTaskForm";
 import TodoList from "./_components/TodoList";
+import FadeLoader from "@/components/ui/FadeLoader";
 
 import {
   addTodo,
@@ -16,23 +18,23 @@ import {
 import { Todo } from "./_types/todo";
 
 export default function TodoPage() {
+  const { data: session, status } = useSession();
+  const token = (session?.user as any)?.token;
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   async function fetchTodos() {
+    if (!token) return;
     try {
-
-      const data = await getTodos();
+      const data = await getTodos(token);
 
       if (Array.isArray(data)) {
         setTodos(data);
       }
-
       else if (Array.isArray(data.data)) {
         setTodos(data.data);
       }
-
       else {
         setTodos([]);
       }
@@ -43,13 +45,14 @@ export default function TodoPage() {
   }
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    if (status === "authenticated" && token) {
+      fetchTodos();
+    }
+  }, [status, token]);
 
   async function handleAdd(title: string) {
-
+    if (!token) return;
     try {
-
       const localDate = new Date(
         selectedDate.getTime() -
         selectedDate.getTimezoneOffset() * 60000
@@ -59,7 +62,7 @@ export default function TodoPage() {
         title,
         description: "",
         dueDate: localDate.toLocaleDateString("sv-SE"),
-      });
+      }, token);
 
       await fetchTodos();
 
@@ -69,38 +72,51 @@ export default function TodoPage() {
   }
 
   async function handleToggle(id: string) {
+    if (!token) return;
     try {
-
-      await toggleTodo(Number(id));
+      await toggleTodo(Number(id), token);
       await fetchTodos();
-
     } catch (err) {
       console.log(err);
     }
   }
 
   async function handleDelete(id: string) {
+    if (!token) return;
     try {
-
-      await deleteTodo(Number(id));
+      await deleteTodo(Number(id), token);
       await fetchTodos();
-
     } catch (err) {
       console.log(err);
     }
   }
 
+  const selectedDateStr = new Date(
+    selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
+  ).toLocaleDateString("sv-SE");
+
+  const filteredTodos = todos.filter((todo) => {
+    if (!todo.dueDate) return false;
+    return todo.dueDate.substring(0, 10) === selectedDateStr;
+  });
+
+  if (status === "loading") {
+    return (
+      <div className="bg-[#FAF9F7] min-h-screen flex items-center justify-center">
+        <FadeLoader />
+      </div>
+    );
+  }
+
   return (
-
     <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-10">
-
       <div className="max-w-5xl mx-auto">
 
         {/* MAIN CARD */}
         <div
           className="
             overflow-hidden
-            rounded-[32px]
+            rounded-[10px]
             bg-white
             shadow-sm
             grid
@@ -129,7 +145,7 @@ export default function TodoPage() {
 
             <div className="mt-6">
               <TodoList
-                todos={todos}
+                todos={filteredTodos}
                 onToggle={handleToggle}
                 onDelete={handleDelete}
               />
@@ -143,4 +159,4 @@ export default function TodoPage() {
 
     </div>
   );
-}
+}

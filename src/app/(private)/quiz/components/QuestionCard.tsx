@@ -55,7 +55,7 @@ export const QuestionCard = ({
         </h2>
 
         <div className="flex flex-col gap-3">
-          {question.answers.map((answer) => (
+          {(question.answers || question.options || []).map((answer) => (
             <AnswerOption
               key={answer.id}
               option={answer}

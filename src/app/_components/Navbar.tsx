@@ -55,8 +55,27 @@ export default function Navbar() {
                       >
                         {link.element}
                       </Link>
+
+
+
                     </li>
+
+
                   ))}
+
+                  <li>
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="login-btn cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </li>
+
+
+
+
+
                 </>
               ) : (
                 <>
