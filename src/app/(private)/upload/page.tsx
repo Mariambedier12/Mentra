@@ -1,8 +1,10 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { uploadDocument } from "./_services/upload.service";
+import FadeLoader from "@/components/ui/FadeLoader";
 
 interface HistoryItem {
   id: number;
@@ -56,6 +58,96 @@ export default function UploadPage() {
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
 
+  // Upload and file state
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+  const [uploadedDocId, setUploadedDocId] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const token = (session as any)?.user?.token;
+    if (!token) return;
+
+    fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.level) {
+          router.push("/quiz");
+        } else {
+          setAdhdLevel(data.level);
+        }
+      });
+  }, [session, router]);
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    await processUpload(selectedFile);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const selectedFile = e.dataTransfer.files?.[0];
+    if (!selectedFile) return;
+    await processUpload(selectedFile);
+  };
+
+  const processUpload = async (selectedFile: File) => {
+    setFile(selectedFile);
+    setUploadStatus("uploading");
+    setErrorMessage("");
+
+    const token = (session as any)?.user?.token;
+    if (!token) {
+      setUploadStatus("error");
+      setErrorMessage("You must be logged in to upload files.");
+      return;
+    }
+
+    try {
+      const result = await uploadDocument(selectedFile, token);
+      console.log("Upload result:", result);
+      const docId = result?.id || result?.documentId || result?.data?.id || result?.data?.documentId;
+      if (docId) {
+        setUploadedDocId(docId);
+        setUploadStatus("success");
+      } else {
+        // Fallback to 1 if document uploaded successfully but no ID was returned
+        setUploadedDocId(1);
+        setUploadStatus("success");
+      }
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      setUploadStatus("error");
+      setErrorMessage(err.message || "Failed to upload document. Please try again.");
+    }
+  };
+
+  const handleStartSession = () => {
+    router.push(`/study-session?documentId=${uploadedDocId || 1}`);
+  };
+
+  return (
+    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
+      <div className="max-w-[1050px] mx-auto">
     if (date.toDateString() === today.toDateString()) return "Today";
     if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
     return date.toLocaleDateString();
@@ -77,6 +169,122 @@ export default function UploadPage() {
             📅 TODAY'S PLAN
           </p>
 
+          {/* Upload Area */}
+          <div 
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{
+              border: isDragging ? "2px dashed #4338ca" : "2px dashed #d1d5db",
+              borderRadius: "12px",
+              padding: "3rem",
+              textAlign: "center",
+              background: isDragging ? "#f0f4ff" : "#f9fafb",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <input 
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".pdf,.png,.jpg,.jpeg"
+              style={{ display: "none" }}
+            />
+
+            {uploadStatus === "idle" && (
+              <>
+                <div style={{ fontSize: "32px", marginBottom: "1rem" }}>☁️</div>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#1f2937", marginBottom: "0.5rem" }}>
+                  Upload Lectures
+                </h3>
+                <p style={{ fontSize: "14px", color: "#9ca3af", marginBottom: "1.5rem" }}>
+                  Drag and drop PDF, JPG, Or PNG
+                </p>
+                <button
+                  onClick={handleButtonClick}
+                  style={{
+                    background: "#0f1f5c",
+                    color: "white",
+                    padding: "0.75rem 2rem",
+                    borderRadius: "99px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1a3a8f")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#0f1f5c")}
+                >
+                  Upload Content
+                </button>
+              </>
+            )}
+
+            {uploadStatus === "uploading" && (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", padding: "1.5rem" }}>
+                <FadeLoader color="#0f1f5c" />
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#0f1f5c", marginTop: "1rem" }}>
+                  Uploading "{file?.name}"...
+                </h3>
+                <p style={{ fontSize: "14px", color: "#9ca3af" }}>
+                  Please wait while we process your document.
+                </p>
+              </div>
+            )}
+
+            {uploadStatus === "success" && (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                <div style={{ fontSize: "32px" }}>✅</div>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#10b981" }}>
+                  Uploaded Successfully!
+                </h3>
+                <p style={{ fontSize: "14px", color: "#1f2937", fontWeight: 500 }}>
+                  📄 {file?.name}
+                </p>
+                <button
+                  onClick={handleButtonClick}
+                  style={{
+                    background: "none",
+                    color: "#4338ca",
+                    border: "none",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    marginTop: "8px",
+                  }}
+                >
+                  Choose a different file
+                </button>
+              </div>
+            )}
+
+            {uploadStatus === "error" && (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                <div style={{ fontSize: "32px" }}>⚠️</div>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ef4444" }}>
+                  Upload Failed
+                </h3>
+                <p style={{ fontSize: "14px", color: "#ef4444", maxWidth: "400px" }}>
+                  {errorMessage}
+                </p>
+                <button
+                  onClick={handleButtonClick}
+                  style={{
+                    background: "#0f1f5c",
+                    color: "white",
+                    padding: "0.5rem 1.5rem",
+                    borderRadius: "99px",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    border: "none",
+                    cursor: "pointer",
+                    marginTop: "8px",
+                  }}
+                >
+                  Try Again
+                </button>
+              </div>
           <div style={{
             border: uploadedFile ? "2px solid #4338ca" : "2px dashed #d1d5db",
             borderRadius: "12px",
@@ -150,6 +358,7 @@ export default function UploadPage() {
 
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <button
+            onClick={handleStartSession}
             disabled={!uploadedFile}
             onClick={() => router.push(`/study-session?documentId=${documentId}`)}
             style={{
@@ -171,7 +380,9 @@ export default function UploadPage() {
             Start Session ▶
           </button>
           <p style={{ fontSize: "14px", color: "#9ca3af", marginTop: "0.75rem" }}>
-            Start learning now
+            {uploadStatus === "success" 
+              ? "Your document is ready. Click to start learning!" 
+              : "Start learning now (defaults to sample document if no upload)"}
           </p>
         </div>
 

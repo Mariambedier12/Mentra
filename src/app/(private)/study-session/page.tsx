@@ -24,6 +24,8 @@ export default function StudySessionPage() {
   } = useStudySession();
 
   return (
+    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
+      <div className="max-w-[1050px] mx-auto">
     <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto" }}>
 

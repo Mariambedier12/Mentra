@@ -11,8 +11,8 @@ export default function InsightsPage() {
   const { insights } = useInsights();
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
+      <div className="max-w-[1050px] mx-auto">
 
         <h1 style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937", marginBottom: "2rem" }}>
           Your Insights

@@ -63,14 +63,14 @@ export default function Navbar() {
 
                   ))}
 
-                  <li>
+                  {/* <li>
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
                       className="login-btn cursor-pointer"
                     >
                       Logout
                     </button>
-                  </li>
+                  </li> */}
 
 
 
