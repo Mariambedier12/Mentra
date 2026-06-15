@@ -45,10 +45,10 @@ export default function ReminderWatcher() {
 
         if (todayUnfinished.length > 0) {
           if (todayUnfinished.length === 1) {
-            setMessage(`Reminder: You have a pending task today: "${todayUnfinished[0].title}". Do not forget to complete it! ⏰`);
+            setMessage(`You have a pending task today: "${todayUnfinished[0].title}". Do not forget to complete it!`);
           } else {
             const taskTitles = todayUnfinished.map((t: any) => `"${t.title}"`).join(", ");
-            setMessage(`Reminder: You have ${todayUnfinished.length} pending tasks today: ${taskTitles}. Do not forget to complete them! ⏰`);
+            setMessage(`You have ${todayUnfinished.length} pending tasks today: ${taskTitles}. Do not forget to complete them!`);
           }
           return; // Skip tomorrow check if today has reminders
         }
@@ -63,10 +63,10 @@ export default function ReminderWatcher() {
 
         if (tomorrowUnfinished.length > 0) {
           if (tomorrowUnfinished.length === 1) {
-            setMessage(`Reminder for tomorrow: You have a task scheduled: "${tomorrowUnfinished[0].title}"! 🌟`);
+            setMessage(`You have a task scheduled for tomorrow: "${tomorrowUnfinished[0].title}"!`);
           } else {
             const tomorrowTitles = tomorrowUnfinished.map((t: any) => `"${t.title}"`).join(", ");
-            setMessage(`Reminder for tomorrow: You have ${tomorrowUnfinished.length} tasks scheduled: ${tomorrowTitles}! 🌟`);
+            setMessage(`You have ${tomorrowUnfinished.length} tasks scheduled for tomorrow: ${tomorrowTitles}!`);
           }
         }
 
@@ -78,6 +78,17 @@ export default function ReminderWatcher() {
     checkReminders();
   }, [status, token, isClosed]);
 
+  // Auto-dismiss after 30 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setIsClosed(true);
+        sessionStorage.setItem("reminder_dismissed", "true");
+      }, 30000); // 30 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleDismiss = () => {
     setIsClosed(true);
     sessionStorage.setItem("reminder_dismissed", "true");
@@ -87,18 +98,61 @@ export default function ReminderWatcher() {
 
   return (
     <div 
-      className="fixed left-0 w-full bg-[#091A58] text-[#FAF9F7] text-xs md:text-sm py-2.5 px-6 z-40 flex items-center justify-between shadow-sm border-t border-[#FAF9F7]/10 transition-all duration-300"
-      style={{ top: "72px" }}
+      className="fixed right-6 bottom-6 z-50 transition-all duration-500 transform translate-y-0"
+      style={{
+        background: "#091A58",
+        borderRadius: "16px",
+        padding: "1.25rem",
+        color: "#FAF9F7",
+        width: "360px",
+        boxShadow: "0 20px 25px -5px rgba(9, 26, 88, 0.25), 0 10px 10px -5px rgba(9, 26, 88, 0.15)",
+        border: "1.5px solid rgba(250, 249, 247, 0.15)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
     >
-      <div className="flex items-center gap-2 mx-auto text-center font-medium">
-        <span>{message}</span>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", color: "#E1E2EC", opacity: 0.8 }}>
+          🔔 Task Reminder
+        </span>
+        <button 
+          onClick={handleDismiss}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#FAF9F7",
+            cursor: "pointer",
+            fontSize: "16px",
+            opacity: 0.7,
+            padding: 0,
+            lineHeight: 1
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+        >
+          ✕
+        </button>
       </div>
-      <button 
-        onClick={handleDismiss} 
-        className="text-[#FAF9F7]/80 hover:text-white text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-full px-3 py-1 transition cursor-pointer flex-shrink-0"
-      >
-        Dismiss
-      </button>
+      <p style={{ fontSize: "14px", lineHeight: 1.5, margin: 0, fontWeight: 500 }}>
+        {message}
+      </p>
+      {/* Visual countdown progress line */}
+      <div style={{ height: "3px", background: "rgba(250, 249, 247, 0.2)", borderRadius: "99px", overflow: "hidden" }}>
+        <div style={{
+          height: "100%",
+          background: "#10b981",
+          width: "100%",
+          animation: "countdown 30s linear forwards"
+        }} />
+      </div>
+      {/* CSS Animation keyframes */}
+      <style>{`
+        @keyframes countdown {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+      `}</style>
     </div>
   );
 }

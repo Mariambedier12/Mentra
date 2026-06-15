@@ -17,7 +17,7 @@ export default function Navbar() {
   /*Authentication Flash*/
   /*if (status === "loading") return null;*/
 
-  if (pathname.startsWith("/quiz")) return null;
+  if (pathname.startsWith("/quiz") || pathname.startsWith("/study-session")) return null;
 
   const publicLinks = [
     { path: '/', element: 'Home' },
