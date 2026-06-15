@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { QuizResult as QuizResultType } from "../types/quiz";
 
 interface Props {
@@ -28,11 +30,31 @@ const levelConfig = {
   },
 };
 
+const normalizeLevel = (raw: string): Level => {
+  if (raw.toLowerCase().includes("mild")) return "Mild";
+  if (raw.toLowerCase().includes("moderate")) return "Moderate";
+  if (raw.toLowerCase().includes("severe")) return "Severe";
+  return "Mild";
+};
+
 export const QuizResult = ({ result, onRestart }: Props) => {
   const router = useRouter();
-  const percentage = Math.round((result.score / result.totalQuestions) * 100);
+  const { data: session } = useSession();
+  const [level, setLevel] = useState<Level>("Mild");
 
-  const level: Level = percentage < 40 ? "Mild" : percentage < 70 ? "Moderate" : "Severe";
+  useEffect(() => {
+    const token = (session as any)?.user?.token;
+    if (!token) return;
+
+    fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.level) setLevel(normalizeLevel(data.level));
+      });
+  }, [session]);
+
   const config = levelConfig[level];
 
   return (

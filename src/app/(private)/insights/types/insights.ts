@@ -1,15 +1,7 @@
-export interface DailyActivity {
-  day: string;
-  minutes: number;
-}
-
 export interface InsightsData {
-  weeklyFocusMinutes: number;
-  focusPercentageChange: number;
-  weeklyActivity: DailyActivity[];
-  mostProductiveStart: string;
-  mostProductiveEnd: string;
-  mostProductiveLabel: string;
-  productiveTip: string;
-  weeklySessions: number;
+  totalStudyMinutesLast7Days: number;
+  totalSessionsLast7Days: number;
+  averageSessionMinutes: number;
+  adhdLevel: string;
+  aiRecommendation: string;
 }

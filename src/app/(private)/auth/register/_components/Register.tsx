@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react'
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import img from '../../../../../assets/signup.png'
 import person from '../../../../../assets/person.png'
@@ -17,7 +18,6 @@ import { checkEmailExists } from '../../services/auth.service';
 
 import { registerSchema, registerSchemaForm } from '@/schema/register.schema';
 
-import { signIn } from "next-auth/react";
 
 
 export default function Page() {
@@ -66,24 +66,18 @@ export default function Page() {
       console.log("REGISTER RESPONSE:", result);
 
       if (res.ok) {
-        toast.success('Account created successfully!');
+  toast.success('Account created successfully!');
 
-        // ✅ عمل login تلقائي بعد الـ register
-        const signInRes = await signIn("credentials", {
-          email: data.email,
-          password: data.password,
-          redirect: false,
-        });
+  await signIn("credentials", {
+    email: data.email,
+    password: data.password,
+    redirect: false,
+  });
 
-        if (signInRes?.ok) {
-          setTimeout(() => {
-            router.push('/quiz'); // أول مرة دايماً على الكويز
-          }, 1000);
-        } else {
-          router.push('/auth/login'); // لو فشل الـ auto login يرجع يلوج يدوي
-        }
-
-      } else {
+  setTimeout(() => {
+    router.push('/quiz');
+  }, 1000);
+} else {
         toast.error(result.message || 'Registration failed');
       }
 
