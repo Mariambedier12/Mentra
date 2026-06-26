@@ -26,4 +26,7 @@ export interface SessionData {
     title: string;
     points: { heading: string; text: string }[];
   };
+  rawSummary?: string;
+  highlights?: string[];
+  quiz?: AIQuizQuestion[];
 }

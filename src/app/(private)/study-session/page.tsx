@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MessageCircleMore } from "lucide-react";
 import { useStudySession } from "./hooks/use-session";
 import Timer from "./components/timer";
 import TabBar from "./components/tab-bar";
