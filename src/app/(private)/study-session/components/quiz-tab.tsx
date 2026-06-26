@@ -5,45 +5,32 @@ interface Props {
   data: SessionData;
 }
 
-const mockQuestions = [
+const fallbackQuestions = [
   {
     question: "What does Information Processing compare the human mind to?",
     options: ["A calculator", "A computer", "A robot", "A network"],
-    correct: 1,
-  },
-  {
-    question: "What is Selective Attention?",
-    options: [
-      "Remembering everything equally",
-      "Focusing on one object while ignoring others",
-      "Processing multiple tasks at once",
-      "Storing memories long-term",
-    ],
-    correct: 1,
-  },
-  {
-    question: "What is the first step in creating a new memory?",
-    options: ["Retrieval", "Storage", "Memory Encoding", "Consolidation"],
-    correct: 2,
+    correctAnswerIndex: 1,
   },
 ];
 
 export default function QuizTab({ data }: Props) {
+  const questions = data.quiz && data.quiz.length > 0 ? data.quiz : fallbackQuestions;
+
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  const q = mockQuestions[current];
+  const q = questions[current];
 
   const handleSelect = (i: number) => {
     if (selected !== null) return;
     setSelected(i);
-    if (i === q.correct) setScore((s) => s + 1);
+    if (i === q.correctAnswerIndex) setScore((s) => s + 1);
   };
 
   const handleNext = () => {
-    if (current < mockQuestions.length - 1) {
+    if (current < questions.length - 1) {
       setCurrent((c) => c + 1);
       setSelected(null);
     } else {
@@ -59,7 +46,7 @@ export default function QuizTab({ data }: Props) {
           Quiz Complete!
         </h2>
         <p style={{ fontSize: "16px", color: "#6b7280", marginBottom: "1.5rem" }}>
-          You scored <strong style={{ color: "#1e3a8a" }}>{score}/{mockQuestions.length}</strong>
+          You scored <strong style={{ color: "#1e3a8a" }}>{score}/{questions.length}</strong>
         </p>
         <button
           onClick={() => { setCurrent(0); setSelected(null); setScore(0); setFinished(false); }}
@@ -75,7 +62,7 @@ export default function QuizTab({ data }: Props) {
     <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.5rem" }}>
         <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#1f2937" }}>Quiz Me</h2>
-        <span style={{ fontSize: "13px", color: "#9ca3af" }}>{current + 1} / {mockQuestions.length}</span>
+        <span style={{ fontSize: "13px", color: "#9ca3af" }}>{current + 1} / {questions.length}</span>
       </div>
 
       <p style={{ fontSize: "16px", fontWeight: 600, color: "#1f2937", marginBottom: "1.5rem", lineHeight: 1.6 }}>
@@ -89,7 +76,7 @@ export default function QuizTab({ data }: Props) {
           let color = "#1f2937";
 
           if (selected !== null) {
-            if (i === q.correct) { bg = "#dcfce7"; border = "1.5px solid #16a34a"; color = "#166534"; }
+            if (i === q.correctAnswerIndex) { bg = "#dcfce7"; border = "1.5px solid #16a34a"; color = "#166534"; }
             else if (i === selected) { bg = "#fee2e2"; border = "1.5px solid #ef4444"; color = "#991b1b"; }
           }
 
@@ -111,7 +98,7 @@ export default function QuizTab({ data }: Props) {
             onClick={handleNext}
             style={{ background: "#0f1f5c", color: "white", padding: "0.6rem 1.5rem", borderRadius: "99px", fontSize: "14px", fontWeight: 500, border: "none", cursor: "pointer" }}
           >
-            {current < mockQuestions.length - 1 ? "Next →" : "Finish"}
+            {current < questions.length - 1 ? "Next →" : "Finish"}
           </button>
         </div>
       )}

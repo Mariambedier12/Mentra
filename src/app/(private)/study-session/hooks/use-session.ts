@@ -12,7 +12,7 @@ export const useStudySession = () => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const documentId = Number(searchParams.get("documentId")) || 1;
-  const token = (session as any)?.user?.token;
+  const token = (session as { user?: { token?: string } } | null)?.user?.token;
 
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");
@@ -20,7 +20,7 @@ export const useStudySession = () => {
   const [totalTime, setTotalTime] = useState(40 * 60);
   const [timeLeft, setTimeLeft] = useState(40 * 60);
   const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -48,7 +48,6 @@ export const useStudySession = () => {
       .then((res) => res.json())
       .then((data) => { if (data.sessionId) setSessionId(data.sessionId); });
 
-    // جيب الـ summary من الـ API
     fetch(`${BASE_URL}/api/Document/summary/${documentId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -57,22 +56,19 @@ export const useStudySession = () => {
         if (!data.summary) return;
         try {
           const parsed = typeof data.summary === "string" ? JSON.parse(data.summary) : data.summary;
-          if (parsed.summary && !parsed.summary.includes("Could not connect")) {
+          if (parsed.final_summary && !parsed.final_summary.includes("Could not connect")) {
+            const highlights = (parsed.chunks || []).flatMap((c: { highlights?: string[] }) => c.highlights || []);
             setSessionData({
-              ...mockSession,
-              summary: {
-                title: "Core Concepts",
-                points: parsed.keyPoints?.map((kp: string) => ({
-                  heading: "",
-                  text: kp,
-                })) || mockSession.summary.points,
-              },
+              summary: mockSession.summary,
+              rawSummary: parsed.final_summary,
+              highlights,
+              quiz: parsed.final_quiz || [],
             });
           }
         } catch { }
       });
 
-  }, [token]);
+  }, [token, documentId]);
 
   useEffect(() => {
     if (isRunning) {
@@ -122,5 +118,6 @@ export const useStudySession = () => {
     setActiveTab,
     progress,
     sessionData,
+    documentId,
   };
 };

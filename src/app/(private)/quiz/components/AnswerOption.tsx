@@ -15,9 +15,9 @@ export const AnswerOption = ({ option, isSelected, onSelect }: Props) => {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "1rem 1.25rem",
-        borderRadius: "24px",
-        border: isSelected ? "2px solid #4338ca" : "1px solid #e5e7eb",
-        background: isSelected ? "#eef2ff" : "#f3f4f6",
+        borderRadius: "30px",
+        border: isSelected ? "2px solid #091A58" : "1px solid #e5e7eb",
+        background: isSelected ? "#DDE1FF" : "#f3f4f6",
         cursor: "pointer",
         transition: "all 0.15s ease",
       }}
@@ -25,7 +25,7 @@ export const AnswerOption = ({ option, isSelected, onSelect }: Props) => {
       <span style={{
         fontSize: "15px",
         fontWeight: isSelected ? 500 : 400,
-        color: isSelected ? "#312e81" : "#1f2937",
+        color: isSelected ? "#091A58" : "#000000",
       }}>
         {option.text}
       </span>
@@ -34,8 +34,8 @@ export const AnswerOption = ({ option, isSelected, onSelect }: Props) => {
         width: "20px",
         height: "20px",
         borderRadius: "50%",
-        border: isSelected ? "2px solid #4338ca" : "2px solid #9ca3af",
-        background: isSelected ? "#4338ca" : "white",
+        border: isSelected ? "2px solid #091A58" : "2px solid #afaf9c",
+        background: isSelected ? "#091A58" : "white",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
