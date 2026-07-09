@@ -73,7 +73,7 @@ export default function QuizTab({ data }: Props) {
         boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
         gap: "1.5rem"
       }}>
-        <Image src={quizmeIcon} alt="Quiz Me" width={180} height={180} style={{ objectFit: "contain" }} />
+        <Image src={quizmeIcon} alt="Quiz Me" width={120} height={120} style={{ objectFit: "contain" }} />
         <div>
           <h2 style={{ fontSize: "24px", fontWeight: 700, color: "black", margin: "0 0 8px 0" }}>Quiz me</h2>
           <p style={{ fontSize: "16px", color: "black", margin: 0, fontWeight: 500 }}>

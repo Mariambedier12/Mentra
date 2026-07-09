@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 export default function Login() {
 
   const router = useRouter();
+  const [rememberMe, setRememberMe] = React.useState(false);
 
   const form = useForm<loginSchemaForm>({
     resolver: zodResolver(loginSchema),
@@ -26,7 +27,21 @@ export default function Login() {
     }
   });
 
+  React.useEffect(() => {
+    const savedEmail = localStorage.getItem("mentra-remember-email");
+    if (savedEmail) {
+      form.setValue("email", savedEmail);
+      setRememberMe(true);
+    }
+  }, [form]);
+
   async function onSubmit(data: loginSchemaForm) {
+    if (rememberMe) {
+      localStorage.setItem("mentra-remember-email", data.email);
+    } else {
+      localStorage.removeItem("mentra-remember-email");
+    }
+
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -39,6 +54,12 @@ export default function Login() {
     }
 
     toast.success("Login successful!");
+
+    // Clear old user's custom settings
+    localStorage.removeItem("mentra-remember-email-skip"); // Clean template files if any
+    localStorage.removeItem("mentra-custom-study-time");
+    localStorage.removeItem("mentra-custom-break-time");
+    sessionStorage.removeItem("reminder_dismissed_messages");
 
     // نجيب الـ session الجديدة عشان ناخد الـ token
     const { getSession } = await import("next-auth/react");
@@ -157,7 +178,12 @@ export default function Login() {
                 {/* REMEMBER + FORGOT */}
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 cursor-pointer" />
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 cursor-pointer"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
                     Remember me
                   </label>
 

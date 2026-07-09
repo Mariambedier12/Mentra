@@ -29,6 +29,7 @@ export const useStudySession = () => {
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
   const prevIsRunningRef = useRef(false);
   const bgAudioTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sessionEndedRef = useRef(false);
 
   useEffect(() => {
     if (sessionId) {
@@ -53,37 +54,87 @@ export const useStudySession = () => {
     };
   }, []);
 
-  // Background music loop effect with a 3-second transition delay
+  // Background music loop effect with interactive play fallback to resolve autoplay restrictions
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    if (!bgAudioRef.current) {
-      bgAudioRef.current = new Audio("/sounds/Walen - Dark Heart .mp3");
+    const SOUND_PATHS: Record<string, string> = {
+      rain: "/sounds/relaxing-rain.mp3",
+      "white noise": "/sounds/white-noise-378857.mp3",
+      ambient: "/sounds/Walen - Dark Heart .mp3",
+      wallflower: "/sounds/Epic Spectrum - Wallflower.mp3",
+    };
+
+    const isEnabled = localStorage.getItem("focus-sound-enabled") !== "false";
+    const selectedSound = localStorage.getItem("focus-sound-selected") || "ambient";
+    const soundPath = SOUND_PATHS[selectedSound] || SOUND_PATHS.ambient;
+
+    if (!isEnabled) {
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+        bgAudioRef.current = null;
+      }
+      return;
+    }
+
+    // Only instantiate if the audio hasn't been instantiated or the source has changed
+    const targetSrc = new URL(soundPath, window.location.origin).href;
+    if (!bgAudioRef.current || bgAudioRef.current.src !== targetSrc) {
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+      }
+      bgAudioRef.current = new Audio(soundPath);
       bgAudioRef.current.loop = true;
     }
 
-    if (bgAudioTimeoutRef.current) {
-      clearTimeout(bgAudioTimeoutRef.current);
-      bgAudioTimeoutRef.current = null;
-    }
+    let interactionListenersActive = false;
+
+    const playOnInteraction = () => {
+      if (bgAudioRef.current && isRunning && mode === "study") {
+        bgAudioRef.current.play()
+          .then(cleanupListeners)
+          .catch(err => console.log("Play on interaction failed:", err));
+      }
+    };
+
+    const cleanupListeners = () => {
+      if (interactionListenersActive) {
+        window.removeEventListener("click", playOnInteraction);
+        window.removeEventListener("keydown", playOnInteraction);
+        window.removeEventListener("touchstart", playOnInteraction);
+        interactionListenersActive = false;
+      }
+    };
+
+    const playAudio = () => {
+      if (bgAudioRef.current) {
+        bgAudioRef.current.play()
+          .then(cleanupListeners)
+          .catch(e => {
+            console.log("Background music play error:", e);
+            // If play is blocked by autoplay policies, attach interaction listeners
+            if (!interactionListenersActive) {
+              window.addEventListener("click", playOnInteraction);
+              window.addEventListener("keydown", playOnInteraction);
+              window.addEventListener("touchstart", playOnInteraction);
+              interactionListenersActive = true;
+            }
+          });
+      }
+    };
 
     if (isRunning && mode === "study") {
-      // Delay playing background music by 3 seconds to avoid overlap with timer bell alert
-      bgAudioTimeoutRef.current = setTimeout(() => {
-        if (bgAudioRef.current) {
-          bgAudioRef.current.play().catch(e => console.log("Background music play error:", e));
-        }
-      }, 3000);
+      playAudio();
     } else {
-      bgAudioRef.current.pause();
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+      }
     }
 
     return () => {
-      if (bgAudioTimeoutRef.current) {
-        clearTimeout(bgAudioTimeoutRef.current);
-      }
+      cleanupListeners();
     };
-  }, [isRunning, mode]);
+  }, [isRunning, mode, isLoading]);
 
   // Play timer sound when timer starts running
   useEffect(() => {
@@ -96,6 +147,18 @@ export const useStudySession = () => {
 
   useEffect(() => {
     if (!token) return;
+
+    if (typeof window !== "undefined") {
+      const userEmail = session?.user?.email;
+      if (userEmail) {
+        const storedEmail = localStorage.getItem("mentra-user-email");
+        if (storedEmail !== userEmail) {
+          localStorage.removeItem("mentra-custom-study-time");
+          localStorage.removeItem("mentra-custom-break-time");
+          localStorage.setItem("mentra-user-email", userEmail);
+        }
+      }
+    }
 
     setIsLoading(true);
 
@@ -166,7 +229,13 @@ export const useStudySession = () => {
 
         // Determine study session duration
         let secs = 25 * 60; // Default: 25 minutes
-        if (finalLevel) {
+
+        // Read custom study time from localStorage
+        const storedStudyTime = localStorage.getItem("mentra-custom-study-time");
+
+        if (storedStudyTime) {
+          secs = Number(storedStudyTime) * 60;
+        } else if (finalLevel) {
           const lvl = finalLevel.toLowerCase();
           if (lvl.includes("mild")) secs = 25 * 60;
           else if (lvl.includes("moderate")) secs = 15 * 60;
@@ -246,7 +315,8 @@ export const useStudySession = () => {
       const nextMode = mode === "study" ? "break" : "study";
       setMode(nextMode);
 
-      let newSecs = 5 * 60; // 5 mins break
+      const storedBreakTime = localStorage.getItem("mentra-custom-break-time");
+      let newSecs = storedBreakTime ? Number(storedBreakTime) * 60 : 5 * 60; // 5 mins break
       if (nextMode === "study") {
         newSecs = studyDurationRef.current;
       }
@@ -255,23 +325,69 @@ export const useStudySession = () => {
     }
   }, [timeLeft, isRunning, mode]);
 
-  const toggle = () => setIsRunning((prev) => !prev);
-  
+  const toggle = () => {
+    setIsRunning((prev) => {
+      const next = !prev;
+      if (bgAudioRef.current) {
+        if (next && mode === "study") {
+          bgAudioRef.current.play().catch(e => console.log("Direct toggle play failed:", e));
+        } else {
+          bgAudioRef.current.pause();
+        }
+      }
+      return next;
+    });
+  };
+
   const reset = () => {
     setMode("study");
     const secs = studyDurationRef.current;
     setTotalTime(secs);
     setTimeLeft(secs);
     setIsRunning(false);
+    if (bgAudioRef.current) {
+      bgAudioRef.current.pause();
+    }
   };
 
   const endSession = async () => {
-    if (!sessionId || !token) return;
-    await fetch(`${BASE_URL}/api/Insights/end-session/${sessionId}`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    if (!sessionId || !token || sessionEndedRef.current) return;
+    sessionEndedRef.current = true;
+    try {
+      await fetch(`${BASE_URL}/api/Insights/end-session/${sessionId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (e) {
+      console.error("endSession error:", e);
+    }
   };
+
+  // Auto end session on unmount or tab close / navigate away
+  useEffect(() => {
+    const handleUnload = () => {
+      if (sessionId && token && !sessionEndedRef.current) {
+        sessionEndedRef.current = true;
+        fetch(`${BASE_URL}/api/Insights/end-session/${sessionId}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          keepalive: true,
+        }).catch((err) => console.log("Auto end session failed:", err));
+      }
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    window.addEventListener("pagehide", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+      window.removeEventListener("pagehide", handleUnload);
+      handleUnload();
+    };
+  }, [sessionId, token]);
 
   const progress = Math.round(((totalTime - timeLeft) / totalTime) * 100);
 
@@ -294,5 +410,6 @@ export const useStudySession = () => {
     progress,
     sessionData,
     isLoading,
+    documentId,
   };
 };

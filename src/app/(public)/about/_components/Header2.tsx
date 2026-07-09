@@ -13,19 +13,19 @@ export default function Header() {
           "linear-gradient(300deg, #FAF9F7 40%, #8C94B1 140%, #091A58 150%)",
       }}
     >
-      <div className="max-w-screen-xl mx-auto px- flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-8 flex flex-col lg:flex-row items-center justify-between gap-12 text-center lg:text-left">
 
 
-        <div className="max-w-xl">
+        <div className="max-w-xl flex flex-col items-center lg:items-start">
 
-          <h1 className="text-7xl text-[#091A58] font-extrabold leading-tight drop-shadow-[0_3px_4px_rgba(19,91,236,0.25)]  ">
+          <h1 className="text-5xl md:text-7xl text-[#091A58] font-extrabold leading-tight drop-shadow-[0_3px_4px_rgba(19,91,236,0.25)]  ">
             Mentra
           </h1>
 
-          <p className="[text-shadow:0_3px_4px_rgba(128,128,128,0.5)] mt-6  text-xl leading-relaxed">
-            Transform overwhelming study materials <br /> into clear,
-            structured, and distraction-free <br /> content designed
-            specifically for ADHD <br /> learners.
+          <p className="[text-shadow:0_3px_4px_rgba(128,128,128,0.5)] mt-6  text-lg md:text-xl leading-relaxed">
+            Transform overwhelming study materials <br className="hidden md:inline" /> into clear,
+            structured, and distraction-free <br className="hidden md:inline" /> content designed
+            specifically for ADHD <br className="hidden md:inline" /> learners.
           </p>
 
           <Link href="/auth/register">
@@ -47,13 +47,13 @@ export default function Header() {
 
 
 
-        <div className="flex justify-center lg:justify-end  h-full ">
+        <div className="flex justify-center lg:justify-end items-center h-full w-full max-w-md lg:max-w-lg">
 
 
-          <Link href="/" >
+          <Link href="/" className="w-full">
             <Image src={imghead} alt='img'
 
-              className="w-full max-w-lg object-contain " />
+              className="w-full h-auto object-contain " />
           </Link>
 
 

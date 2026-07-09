@@ -10,10 +10,10 @@ export default function Mission() {
   return (
     <section className="bg-[#FAF9F7] py-18">
 
-      <div className="max-w-screen-xl mx-auto px-">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-8">
 
 
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
 
 
@@ -34,9 +34,9 @@ export default function Mission() {
             </h3>
 
             <p className="text-sm  text-[#1E1E1E] leading-relaxed">
-              To de-stigmatize neurodivergence in professional <br />
-              environments by creating cognitive accessibility tools <br />
-              that empower individuals to leverage their unique mental <br />
+              To de-stigmatize neurodivergence in professional <br className="hidden md:inline" />
+              environments by creating cognitive accessibility tools <br className="hidden md:inline" />
+              that empower individuals to leverage their unique mental <br className="hidden md:inline" />
               frameworks.
             </p>
 
@@ -60,8 +60,8 @@ export default function Mission() {
             </h3>
 
             <p className="text-sm  text-[#1E1E1E] leading-relaxed">
-              A world where the digital landscape is intuitively <br />
-              designed for every cognitive profile, allowing focus to be <br />
+              A world where the digital landscape is intuitively <br className="hidden md:inline" />
+              designed for every cognitive profile, allowing focus to be <br className="hidden md:inline" />
               a universal human right, not a struggle of willpower.
             </p>
 

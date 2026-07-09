@@ -5,6 +5,9 @@ import { useSession } from "next-auth/react";
 
 import ProfileCard from "./_components/profileCard";
 import ProfileForm from "./_components/profileForm";
+import FocusSounds from "./_components/FocusSounds";
+import SessionDuration from "./_components/SessionDuration";
+import PrivacyPolicy from "./_components/PrivacyPolicy";
 import FadeLoader from "@/components/ui/FadeLoader";
 
 import {
@@ -21,6 +24,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [adhdLevel, setAdhdLevel] = useState<string>("Loading...");
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"personal" | "sounds" | "duration" | "privacy">("personal");
 
   async function fetchProfile() {
     try {
@@ -94,8 +98,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="bg-[#FAF9F7] min-h-screen pt-32 pb-16 px-6">
-      <div className="max-w-[1050px] mx-auto">
+    <div className="pt-32 pb-16 px-6">
+      <div className="max-w-[1100px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-16 items-start">
 
           {/* LEFT */}
@@ -109,13 +113,28 @@ export default function ProfilePage() {
             }
             adhdLevel={adhdLevel}
             onImageChange={handleUpload}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
 
           {/* RIGHT */}
-          <ProfileForm
-            name={profile.displayName || profile.name}
-            email={profile.email}
-          />
+          <div>
+            {activeTab === "personal" && (
+              <ProfileForm
+                name={profile.displayName || profile.name}
+                email={profile.email}
+              />
+            )}
+            {activeTab === "sounds" && (
+              <FocusSounds />
+            )}
+            {activeTab === "duration" && (
+              <SessionDuration />
+            )}
+            {activeTab === "privacy" && (
+              <PrivacyPolicy />
+            )}
+          </div>
 
         </div>
       </div>

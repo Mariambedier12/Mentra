@@ -4,9 +4,30 @@ import timeIcon from "@/assets/icontime.png";
 interface Props {
   recommendation: string;
   adhdLevel: string;
+  mostProductiveStart?: string;
+  mostProductiveEnd?: string;
+  mostProductiveLabel?: string;
 }
 
-export default function ProductiveTimeCard({ recommendation, adhdLevel }: Props) {
+export default function ProductiveTimeCard({
+  recommendation,
+  adhdLevel,
+  mostProductiveStart,
+  mostProductiveEnd,
+  mostProductiveLabel
+}: Props) {
+  const hasData = !!(mostProductiveStart && mostProductiveEnd);
+
+  const lvl = adhdLevel ? adhdLevel.toLowerCase() : "";
+  let displayRec = recommendation;
+  if (lvl.includes("severe") || lvl.includes("high")) {
+    displayRec = "You have Severe ADHD. 10-minute study sessions are recommended for you.";
+  } else if (lvl.includes("moderate")) {
+    displayRec = "You have Moderate ADHD. 15-minute study sessions are recommended for you.";
+  } else if (lvl.includes("mild")) {
+    displayRec = "You have Mild ADHD. 25-minute study sessions are recommended for you.";
+  }
+
   return (
     <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.5rem" }}>
       <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937", marginBottom: "1rem" }}>Most Productive</p>

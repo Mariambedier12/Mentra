@@ -13,7 +13,9 @@ export default function Footer({ variant = "small" }) {
   const pathname = usePathname();
   if (pathname.startsWith("/quiz")) return null;
 
-  if (variant === "big") {
+  const effectiveVariant = pathname === "/privacy-policy" ? "small" : variant;
+
+  if (effectiveVariant === "big") {
     return (
       <footer className="bg-[#FAF9F7] pt-9 pb-14">
 
@@ -72,7 +74,7 @@ export default function Footer({ variant = "small" }) {
               <div>
                 <h3 className="font-semibold mb-6 text-[#1F1F1F]">Legal</h3>
                 <ul className="space-y-3 text-[#8C8C8C] text-sm">
-                  <li><Link href="#">Privacy</Link></li>
+                  <li><Link href="/privacy-policy">Privacy</Link></li>
                   <li><Link href="#">Terms</Link></li>
                   <li><Link href="#">Accessibility</Link></li>
                   <li><Link href="#">Contact</Link></li>
@@ -94,7 +96,7 @@ export default function Footer({ variant = "small" }) {
               </p>
 
               <div className="flex gap-6 text-sm text-[#8C8C8C]">
-                <Link href="#">Privacy Policy</Link>
+                <Link href="/privacy-policy">Privacy Policy</Link>
                 <Link href="#">Cookie Settings</Link>
               </div>
 
@@ -121,7 +123,7 @@ export default function Footer({ variant = "small" }) {
       <ul className="pr-20 flex flex-wrap items-center mt-3 text-sm font-medium text-body sm:mt-0">
 
         <li>
-          <a href="#" className="text-[#8C8C8C] hover:underline me-4 md:me-6">Privacy Policy</a>
+          <Link href="/privacy-policy" className="text-[#8C8C8C] hover:underline me-4 md:me-6">Privacy Policy</Link>
         </li>
 
         <li>

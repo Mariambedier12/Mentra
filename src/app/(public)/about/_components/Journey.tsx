@@ -9,7 +9,7 @@ export default function Works() {
   return (
     <section className="bg-[#FAF9F7] py-18">
 
-      <div className="max-w-screen-xl mx-auto px-">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-8">
 
 
 

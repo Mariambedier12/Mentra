@@ -2,26 +2,43 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 import { getTodos, getTomorrowReminder } from "../todo/_services/todo.service";
 
 export default function ReminderWatcher() {
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const token = (session?.user as any)?.token;
 
   const [message, setMessage] = useState<string | null>(null);
-  const [isClosed, setIsClosed] = useState(false);
+  const [dismissedMessages, setDismissedMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    // Check if dismissed in this browser session
-    const dismissed = sessionStorage.getItem("reminder_dismissed");
-    if (dismissed === "true") {
-      setIsClosed(true);
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("reminder_dismissed_messages");
+        if (stored) {
+          setDismissedMessages(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
+
+    // Reset dismissed reminders list every 5 minutes to show them again if tasks remain unfinished
+    const interval = setInterval(() => {
+      setDismissedMessages([]);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("reminder_dismissed_messages");
+      }
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (status !== "authenticated" || !token || isClosed) return;
+    if (status !== "authenticated" || !token || pathname === "/study-session") return;
 
     async function checkReminders() {
       try {
@@ -29,7 +46,10 @@ export default function ReminderWatcher() {
         const localDate = new Date(
           now.getTime() - now.getTimezoneOffset() * 60000
         );
-        const todayStr = localDate.toLocaleDateString("sv-SE"); // YYYY-MM-DD
+        const yyyy = localDate.getFullYear();
+        const mm = String(localDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(localDate.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
 
         // 1. Check today's tasks
         const data = await getTodos(token);
@@ -54,20 +74,27 @@ export default function ReminderWatcher() {
         }
 
         // 2. Check tomorrow's reminder from API
-        const tomorrowData = await getTomorrowReminder(token);
-        const tomorrowTodos = Array.isArray(tomorrowData)
-          ? tomorrowData
-          : tomorrowData.data || [];
+        try {
+          const tomorrowData = await getTomorrowReminder(token);
+          const tomorrowTodos = Array.isArray(tomorrowData)
+            ? tomorrowData
+            : tomorrowData.data || [];
 
-        const tomorrowUnfinished = tomorrowTodos.filter((todo: any) => !todo.isCompleted);
+          const tomorrowUnfinished = tomorrowTodos.filter((todo: any) => !todo.isCompleted);
 
-        if (tomorrowUnfinished.length > 0) {
-          if (tomorrowUnfinished.length === 1) {
-            setMessage(`You have a task scheduled for tomorrow: "${tomorrowUnfinished[0].title}"!`);
+          if (tomorrowUnfinished.length > 0) {
+            if (tomorrowUnfinished.length === 1) {
+              setMessage(`You have a task scheduled for tomorrow: "${tomorrowUnfinished[0].title}"!`);
+            } else {
+              const tomorrowTitles = tomorrowUnfinished.map((t: any) => `"${t.title}"`).join(", ");
+              setMessage(`You have ${tomorrowUnfinished.length} tasks scheduled for tomorrow: ${tomorrowTitles}!`);
+            }
           } else {
-            const tomorrowTitles = tomorrowUnfinished.map((t: any) => `"${t.title}"`).join(", ");
-            setMessage(`You have ${tomorrowUnfinished.length} tasks scheduled for tomorrow: ${tomorrowTitles}!`);
+            setMessage(null);
           }
+        } catch (tomorrowErr) {
+          console.error("Error fetching tomorrow reminder in ReminderWatcher:", tomorrowErr);
+          setMessage(null);
         }
 
       } catch (err) {
@@ -76,25 +103,26 @@ export default function ReminderWatcher() {
     }
 
     checkReminders();
-  }, [status, token, isClosed]);
+  }, [status, token, pathname]);
+
+  const handleDismiss = () => {
+    if (!message) return;
+    const nextDismissed = [...dismissedMessages, message];
+    setDismissedMessages(nextDismissed);
+    sessionStorage.setItem("reminder_dismissed_messages", JSON.stringify(nextDismissed));
+  };
 
   // Auto-dismiss after 30 seconds
   useEffect(() => {
-    if (message) {
+    if (message && !dismissedMessages.includes(message)) {
       const timer = setTimeout(() => {
-        setIsClosed(true);
-        sessionStorage.setItem("reminder_dismissed", "true");
+        handleDismiss();
       }, 30000); // 30 seconds
       return () => clearTimeout(timer);
     }
-  }, [message]);
+  }, [message, dismissedMessages]);
 
-  const handleDismiss = () => {
-    setIsClosed(true);
-    sessionStorage.setItem("reminder_dismissed", "true");
-  };
-
-  if (isClosed || !message) return null;
+  if (pathname === "/study-session" || !message || dismissedMessages.includes(message)) return null;
 
   return (
     <div 

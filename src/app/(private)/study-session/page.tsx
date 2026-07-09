@@ -10,11 +10,13 @@ import SessionProgress from "./components/session-progress";
 import SummaryTab from "./components/summary-tab";
 import HighlightTab from "./components/highlight-tab";
 import QuizTab from "./components/quiz-tab";
+import ChatBot from "./components/chat-bot";
 import FadeLoader from "@/components/ui/FadeLoader";
 
 export default function StudySessionPage() {
   const router = useRouter();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const {
     formattedTime,
     isRunning,
@@ -27,13 +29,12 @@ export default function StudySessionPage() {
     progress,
     sessionData,
     isLoading,
+    documentId,
   } = useStudySession();
 
   return (
-    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
-      <div className="max-w-[1050px] mx-auto">
-    <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 2rem 2rem" }}>
-      <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+    <div className="pt-32 px-6 pb-16">
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937", marginBottom: "1.5rem" }}>
           Study session
@@ -43,6 +44,7 @@ export default function StudySessionPage() {
           time={formattedTime}
           isRunning={isRunning}
           mode={mode}
+          isLoading={isLoading}
           onToggle={toggle}
           onReset={reset}
           onEnd={async () => {
@@ -89,6 +91,50 @@ export default function StudySessionPage() {
 
       </div>
 
+      {/* Chat Bot Floating Button */}
+      <button
+        type="button"
+        onClick={() => setShowChat(!showChat)}
+        style={{
+          position: "fixed",
+          right: "24px",
+          bottom: "70px",
+          width: "62px",
+          height: "62px",
+          borderRadius: "50%",
+          border: "none",
+          background: "#0f1f5c",
+          color: "#ffffff",
+          display: "grid",
+          placeItems: "center",
+          boxShadow: "0 20px 40px rgba(15, 23, 42, 0.18)",
+          cursor: "pointer",
+          zIndex: 50,
+        }}
+        aria-label="Open chat"
+      >
+        <MessageCircleMore size={24} />
+      </button>
+
+      {showChat && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.35)",
+            display: "grid",
+            placeItems: "center",
+            zIndex: 40,
+            padding: "24px",
+          }}
+          onClick={() => setShowChat(false)}
+        >
+          <div style={{ width: "100%", maxWidth: "760px" }} onClick={(e) => e.stopPropagation()}>
+            <ChatBot onClose={() => setShowChat(false)} documentId={documentId} />
+          </div>
+        </div>
+      )}
+
       {/* Custom Confirmation Modal */}
       {showConfirmModal && (
         <div style={{
@@ -127,7 +173,7 @@ export default function StudySessionPage() {
                 You will lose your progress.
               </p>
             </div>
-             <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "0.5rem" }}>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "0.5rem" }}>
               <button
                 onClick={() => {
                   setShowConfirmModal(false);
@@ -202,6 +248,7 @@ export default function StudySessionPage() {
           `}</style>
         </div>
       )}
+
     </div>
   );
 }

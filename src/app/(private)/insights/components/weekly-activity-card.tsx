@@ -3,6 +3,7 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 interface Props {
   totalMinutes: number;
   averageMinutes: number;
+  weeklyActivity?: { day: string; minutes: number }[];
 }
 
 export default function WeeklyActivityCard({ totalMinutes, averageMinutes }: Props) {
@@ -17,8 +18,8 @@ export default function WeeklyActivityCard({ totalMinutes, averageMinutes }: Pro
   const topDays = [...weeklyData].sort((a, b) => b.value - a.value).slice(0, 2).map((d) => d.day);
 
   return (
-    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.5rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.75rem", minHeight: "310px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937" }}>Weekly Activity</p>
         <p style={{ fontSize: "12px", color: "#9ca3af" }}>Mon – Sun</p>
       </div>

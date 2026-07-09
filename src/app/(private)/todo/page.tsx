@@ -102,15 +102,15 @@ export default function TodoPage() {
 
   if (status === "loading") {
     return (
-      <div className="bg-[#FAF9F7] min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[400px]">
         <FadeLoader />
       </div>
     );
   }
 
   return (
-    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-10">
-      <div className="max-w-5xl mx-auto">
+    <div className="pt-32 px-6 pb-10">
+      <div className="max-w-[1100px] mx-auto">
 
         {/* MAIN CARD */}
         <div
@@ -159,4 +159,4 @@ export default function TodoPage() {
 
     </div>
   );
-}
+}

@@ -2,7 +2,59 @@
 
 import Image from "next/image";
 import readyImg from "@/assets/ready.png";
-import { Bold } from "lucide-react";
+
+const features = [
+  {
+    title: (
+      <>
+        18
+        <br />
+        Questions
+      </>
+    ),
+
+    icon: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 12.5L11.5 15L15 10.5" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#0f1f5c" strokeWidth="1.8" />
+      </svg>
+    ),
+  },
+  {
+    title: (
+      <>
+        Quick
+        <br />
+        Assessment
+      </>
+    ),
+
+
+    icon: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 6V12L15.5 15.5" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20.4 12C20.4 16.692 16.692 20.4 12 20.4C7.308 20.4 3.6 16.692 3.6 12C3.6 7.308 7.308 3.6 12 3.6C16.692 3.6 20.4 7.308 20.4 12Z" stroke="#0f1f5c" strokeWidth="1.8" />
+      </svg>
+    ),
+  },
+  {
+    title: (
+      <>
+        Private
+        <br />
+        Results
+      </>
+    ),
+
+
+    icon: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3Z" stroke="#0f1f5c" strokeWidth="1.8" />
+        <path d="M8.5 12.5L10.8 14.8L15.5 10.1" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+];
 
 const features = [
   {
@@ -59,52 +111,37 @@ const features = [
 
 export default function ReadyScreen({ onStart }: { onStart: () => void }) {
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      textAlign: "center",
-      background: "#FAF9F7",
-    }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        padding: "2rem 1rem",
+        background: "#faf8f7",
+        textAlign: "center",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: "860px" }}>
+        <Image
+          src={readyImg}
+          alt="Ready"
+          width={150}
+          height={150}
+          style={{ margin: "0 auto 1.5rem", display: "block" }}
+        />
 
-      <Image
-        src={readyImg}
-        alt="Ready"
-        width={163}
-        height={164}
-        style={{ marginBottom: "1.5rem" }}
-      />
-
-      <h1 style={{
-        fontSize: "39px",
-        fontWeight: 700,
-        color: "#1f2937",
-        marginBottom: "1.5rem",
-      }}>
-        Ready For Your Quiz?
-      </h1>
-
-      <button
-        onClick={onStart}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "#1a3a8f")}
-        onMouseLeave={(e) => (e.currentTarget.style.background = "#0f1f5c")}
-        style={{
-          background: "#0f1f5c",
-          color: "white",
-          padding: "0.85rem 3rem",
-          borderRadius: "99px",
-          fontSize: "20px",
-          fontWeight: 500,
-          border: "none",
-          cursor: "pointer",
-          width: "420px",
-          transition: "background 0.2s ease",
-        }}
-      >
-        Start
-      </button>
+        <h1
+          className="text-4xl sm:text-5xl md:text-6xl"
+          style={{
+            fontWeight: 700,
+            color: "#1f2937",
+            marginBottom: "2rem",
+            lineHeight: 1.2,
+          }}
+        >
+          Ready for your Quiz?
+        </h1>
 
         <div
           style={{

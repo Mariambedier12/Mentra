@@ -1,5 +1,6 @@
 interface Props {
   minutes: number;
+  percentageChange?: number;
 }
 
 export default function FocusTimeCard({ minutes }: Props) {
@@ -8,9 +9,13 @@ export default function FocusTimeCard({ minutes }: Props) {
   const maxMinutes = 600;
   const progress = circumference * Math.min(minutes / maxMinutes, 1);
 
+  const hasChange = percentageChange !== undefined && percentageChange !== null && !isNaN(percentageChange);
+  const isPositive = hasChange && percentageChange >= 0;
+  const displayValue = hasChange ? Math.abs(percentageChange) : 0;
+
   return (
-    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.5rem" }}>
-      <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937", marginBottom: "1.5rem" }}>Weekly Focus Time</p>
+    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.75rem", minHeight: "310px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937" }}>Weekly Focus Time</p>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
         <div style={{ position: "relative", width: "140px", height: "140px" }}>
