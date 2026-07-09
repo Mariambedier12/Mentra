@@ -28,5 +28,5 @@ export interface SessionData {
   };
   rawSummary?: string;
   highlights?: string[];
-  quiz?: AIQuizQuestion[];
+  quiz?: QuizQuestion[];
 }
