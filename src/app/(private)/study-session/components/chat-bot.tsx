@@ -96,11 +96,10 @@ export default function ChatBot({ onClose, documentId }: { onClose: () => void; 
       });
 
       const data = await response.json();
-      console.log("Chatbot response data from backend:", data);
       const botReply: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: data.response || data.reply || data.message || "Sorry, I couldn't respond right now.",
+        text: data.reply || data.message || "Sorry, I couldn't respond right now.",
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 

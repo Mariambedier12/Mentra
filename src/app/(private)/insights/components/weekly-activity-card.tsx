@@ -6,27 +6,13 @@ interface Props {
   weeklyActivity?: { day: string; minutes: number }[];
 }
 
-export default function WeeklyActivityCard({ totalMinutes, averageMinutes, weeklyActivity }: Props) {
-  let weeklyData = DAYS.map((day) => ({ day, value: 0 }));
-
-  if (weeklyActivity && weeklyActivity.length > 0) {
-    weeklyData = DAYS.map((day) => {
-      const found = weeklyActivity.find(
-        (d) => (d.day || "").toLowerCase().startsWith(day.toLowerCase().substring(0, 3))
-      );
-      return {
-        day,
-        value: found ? found.minutes : 0,
-      };
-    });
-  } else {
-    // نوزع الـ totalMinutes على الأيام بشكل تقريبي
-    const baseValue = Math.max(totalMinutes / 7, 1);
-    weeklyData = DAYS.map((day, i) => ({
-      day,
-      value: Math.round(baseValue * [0.5, 1.2, 0.7, 0.4, 1.0, 0.3, 0.2][i]),
-    }));
-  }
+export default function WeeklyActivityCard({ totalMinutes, averageMinutes }: Props) {
+  // نوزع الـ totalMinutes على الأيام بشكل تقريبي
+  const baseValue = Math.max(totalMinutes / 7, 1);
+  const weeklyData = DAYS.map((day, i) => ({
+    day,
+    value: Math.round(baseValue * [0.5, 1.2, 0.7, 0.4, 1.0, 0.3, 0.2][i]),
+  }));
 
   const maxValue = Math.max(...weeklyData.map((d) => d.value), 1);
   const topDays = [...weeklyData].sort((a, b) => b.value - a.value).slice(0, 2).map((d) => d.day);
@@ -38,7 +24,7 @@ export default function WeeklyActivityCard({ totalMinutes, averageMinutes, weekl
         <p style={{ fontSize: "12px", color: "#9ca3af" }}>Mon – Sun</p>
       </div>
 
-      <div style={{ display: "flex", alignItems: "flex-end", gap: "10px", height: "170px", marginBottom: "0.75rem" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: "10px", height: "120px", marginBottom: "0.75rem" }}>
         {weeklyData.map((d) => (
           <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%" }}>
             <div style={{ flex: 1, width: "100%", display: "flex", alignItems: "flex-end" }}>

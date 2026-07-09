@@ -13,22 +13,7 @@ const mockQuestions: QuizQuestion[] = [
   {
     question: "What does Information Processing compare the human mind to?",
     options: ["A calculator", "A computer", "A robot", "A network"],
-    correct: 1,
-  },
-  {
-    question: "What is Selective Attention?",
-    options: [
-      "Remembering everything equally",
-      "Focusing on one object while ignoring others",
-      "Processing multiple tasks at once",
-      "Storing memories long-term",
-    ],
-    correct: 1,
-  },
-  {
-    question: "What is the first step in creating a new memory?",
-    options: ["Retrieval", "Storage", "Memory Encoding", "Consolidation"],
-    correct: 2,
+    correctAnswerIndex: 1,
   },
 ];
 

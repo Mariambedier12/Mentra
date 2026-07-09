@@ -75,8 +75,6 @@ export const QuizResult = ({ onRestart }: Props) => {
       .then((data) => {
         if (data.level) {
           setLevel(normalizeLevel(data.level));
-          localStorage.removeItem("mentra-custom-study-time");
-          localStorage.removeItem("mentra-custom-break-time");
         }
       })
       .catch((err) => console.error(err));
@@ -96,12 +94,11 @@ export const QuizResult = ({ onRestart }: Props) => {
     >
       {/* Title */}
       <h1
-        className="text-3xl md:text-5xl"
         style={{
+          fontSize: "42px",
           fontWeight: 700,
           color: "#1F2937",
           marginBottom: "24px",
-          lineHeight: 1.2,
         }}
       >
         Your ADHD Level:{" "}
@@ -129,11 +126,9 @@ export const QuizResult = ({ onRestart }: Props) => {
           marginTop: "40px",
           background: "#f4f3f1",
           borderRadius: "24px",
-          padding: "40px 24px",
-          width: "100%",
-          maxWidth: "750px",
-          minHeight: "255px",
-          height: "auto",
+          padding: "40px",
+          width: "750px",
+          height: "255px",
           marginInline: "auto",
           boxShadow: "0px 10px 35px rgba(0,0,0,0.08)",
           border: "1px solid #ebebeb",
@@ -206,8 +201,8 @@ export const QuizResult = ({ onRestart }: Props) => {
         onClick={() => router.push("/upload")}
         style={{
           marginTop: "50px",
-          width: "100%",
-          maxWidth: "400px",
+          width: "400px",
+          maxWidth: "90%",
           height: "50px",
           borderRadius: "999px",
           border: "none",

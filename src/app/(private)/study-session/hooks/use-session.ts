@@ -12,7 +12,7 @@ export const useStudySession = () => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const documentId = Number(searchParams.get("documentId")) || 1;
-  const token = (session as any)?.user?.token;
+  const token = (session as { user?: { token?: string } } | null)?.user?.token;
 
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");

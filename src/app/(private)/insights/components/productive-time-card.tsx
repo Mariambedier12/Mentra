@@ -29,18 +29,14 @@ export default function ProductiveTimeCard({
   }
 
   return (
-    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.75rem", minHeight: "260px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-      <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937", margin: 0 }}>Most Productive</p>
+    <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "1.5rem" }}>
+      <p style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937", marginBottom: "1rem" }}>Most Productive</p>
 
       <div style={{ background: "#eff6ff", borderRadius: "10px", padding: "0.75rem 1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
         <Image src={timeIcon} alt="time" width={20} height={20} />
         <div>
-          <p style={{ fontSize: "14px", fontWeight: 600, color: "#1e3a8a" }}>
-            {hasData ? `${mostProductiveStart} – ${mostProductiveEnd}` : "Gathering data..."}
-          </p>
-          <p style={{ fontSize: "12px", color: "#6b7280" }}>
-            {hasData ? (mostProductiveLabel || "Focus Peak") : "Study more sessions to find your peak focus time"}
-          </p>
+          <p style={{ fontSize: "14px", fontWeight: 600, color: "#1e3a8a" }}>7 PM – 9 PM</p>
+          <p style={{ fontSize: "12px", color: "#6b7280" }}>Evening Focus Peak</p>
         </div>
       </div>
 
@@ -52,14 +48,14 @@ export default function ProductiveTimeCard({
           {[15, 25, 20, 30, 15, 40, 90, 30].map((v, i) => (
             <div key={i} style={{
               flex: 1, borderRadius: "4px",
-              background: hasData ? (i === 6 ? "#1e3a8a" : i === 2 || i === 3 ? "#93c5fd" : "#e5e7eb") : "#e5e7eb",
+              background: i === 6 ? "#1e3a8a" : i === 2 || i === 3 ? "#93c5fd" : "#e5e7eb",
             }} />
           ))}
         </div>
       </div>
 
       <p style={{ fontSize: "12px", color: "#6b7280", lineHeight: 1.6, fontStyle: "italic" }}>
-        Tip: {displayRec}
+        Tip: {recommendation}
       </p>
     </div>
   );
