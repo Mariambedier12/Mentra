@@ -131,9 +131,7 @@ export default function ReadyScreen({ onStart }: { onStart: () => void }) {
               <p style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#111827" }}>
                 {feature.title}
               </p>
-              <p style={{ margin: 0, fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>
-                {feature.subtitle}
-              </p>
+
             </div>
           ))}
         </div>
