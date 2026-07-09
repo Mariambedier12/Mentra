@@ -98,9 +98,9 @@ export default function ReadyScreen({ onStart }: { onStart: () => void }) {
             marginBottom: "2.5rem",
           }}
         >
-          {features.map((feature) => (
+          {features.map((feature, i) => (
             <div
-              key={feature.title}
+              key={i}
               style={{
                 background: "#ebeae8",
                 borderRadius: "28px",

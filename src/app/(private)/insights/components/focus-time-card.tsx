@@ -3,7 +3,7 @@ interface Props {
   percentageChange?: number;
 }
 
-export default function FocusTimeCard({ minutes }: Props) {
+export default function FocusTimeCard({ minutes, percentageChange }: Props) {
   const radius = 55;
   const circumference = 2 * Math.PI * radius;
   const maxMinutes = 600;
