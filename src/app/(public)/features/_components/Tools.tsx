@@ -12,7 +12,7 @@ export default function Tools() {
   return (
     <section className="bg-[#FAF9F7] py-14">
 
-      <div className="max-w-screen-xl mx-auto px-">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-8">
 
         <div className="text-center mb-16">
 

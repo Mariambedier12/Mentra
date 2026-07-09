@@ -9,7 +9,7 @@ export default function Think() {
   return (
     <section className="bg-[#EFEEEC] py-20">
 
-      <div className="max-w-screen-xl mx-auto px-">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-8">
 
 
         <div className="text-center mb-14">
@@ -22,7 +22,7 @@ export default function Think() {
         </div>
 
 
-        <div className="grid grid-cols-[1.7fr_0.7fr_0.9fr] grid-rows-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[1.7fr_0.7fr_0.9fr] md:grid-rows-2 gap-6">
 
 
           <div className="bg-[#E3E2E0] rounded-2xl p-6 flex flex-col justify-end min-h-[180px]">
@@ -36,11 +36,11 @@ export default function Think() {
           </div>
 
 
-          <div className="row-span-2 bg-[#5690D1]/60 text-white rounded-2xl p-6 flex flex-col justify-end min-h-[550px]">
+          <div className="md:row-span-2 bg-[#5690D1]/60 text-white rounded-2xl p-6 flex flex-col justify-end md:min-h-[550px] min-h-[250px]">
             <div>
               <Image src={analysis} alt="" width={30} height={30} />
               <h3 className="mt-4 font-semibold text-lg text-[#1E1E1E]">
-                Insightful <br /> Analytics
+                Insightful <br className="hidden md:inline" /> Analytics
               </h3>
               <p className="text-sm mt-2 opacity-90 text-[#1E1E1E]">
                 Understand your focus  patterns with visual data trends.
@@ -54,7 +54,7 @@ export default function Think() {
               <Image src={list} alt="" width={28} height={28} />
               <h3 className="mt-4 font-bold text-lg">To Do List</h3>
               <p className="text-sm text-[#1E1E1E] mt-2">
-                Visual task management <br /> that eliminates <br /> overwhelm.
+                Visual task management <br className="hidden md:inline" /> that eliminates <br className="hidden md:inline" /> overwhelm.
               </p>
             </div>
           </div>
@@ -78,7 +78,7 @@ export default function Think() {
                 Inclusive Support
               </h3>
               <p className="text-sm text-[#1E1E1E] mt-2">
-                Built by and for the <br /> neurodivergent <br /> community.
+                Built by and for the <br className="hidden md:inline" /> neurodivergent <br className="hidden md:inline" /> community.
               </p>
             </div>
           </div>

@@ -36,14 +36,14 @@ export const QuizContainer = () => {
 
   if (result || stage === "result") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-start justify-center p-10">
+      <div className="min-h-screen bg-gray-50 flex items-start justify-center p-4 sm:p-10">
         <QuizResult result={result!} onRestart={() => window.location.reload()} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-10">
+    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-4 sm:p-10">
       <QuestionCard
         question={currentQuestion}
         questionNumber={currentIndex + 1}

@@ -5,33 +5,45 @@ import FocusTimeCard from "./components/focus-time-card";
 import WeeklyActivityCard from "./components/weekly-activity-card";
 import ProductiveTimeCard from "./components/productive-time-card";
 import WeeklySessionsCard from "./components/weekly-sessions-card";
-import FadeLoader from "@/components/ui/FadeLoader";
 
 export default function InsightsPage() {
-  const { insights } = useInsights();
+  const { insights, loading } = useInsights();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-gray-400 text-lg font-medium">
+        Loading Insights...
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
-      <div className="max-w-[1050px] mx-auto">
+    <div className="pt-32 pb-16 px-6">
+      <div className="max-w-[1100px] mx-auto">
 
-        <h1 style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937", marginBottom: "2rem" }}>
+        <h1 className="text-[28px] font-bold text-[#1f2937] mb-8 leading-none">
           Your Insights
         </h1>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1rem", marginBottom: "1rem" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 mb-6">
           <FocusTimeCard
             minutes={insights.totalStudyMinutesLast7Days}
+            percentageChange={insights.focusPercentageChange}
           />
           <WeeklyActivityCard
             totalMinutes={insights.totalStudyMinutesLast7Days}
             averageMinutes={insights.averageSessionMinutes}
+            weeklyActivity={insights.weeklyActivity}
           />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ProductiveTimeCard
             recommendation={insights.aiRecommendation}
             adhdLevel={insights.adhdLevel}
+            mostProductiveStart={insights.mostProductiveStart}
+            mostProductiveEnd={insights.mostProductiveEnd}
+            mostProductiveLabel={insights.mostProductiveLabel}
           />
           <WeeklySessionsCard sessions={insights.totalSessionsLast7Days} />
         </div>

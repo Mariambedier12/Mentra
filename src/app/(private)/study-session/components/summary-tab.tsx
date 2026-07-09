@@ -108,32 +108,6 @@ export default function SummaryTab({ data }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {/* ADHD Tip Card */}
-      {data.adhdLevel && (
-        <div style={{
-          background: "linear-gradient(135deg, #e0e7ff 0%, #e8eaf6 100%)",
-          borderRadius: "16px",
-          padding: "1.25rem 1.5rem",
-          borderLeft: "5px solid #091A58",
-          boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "15px", fontWeight: 700, color: "#1e1b4b" }}>
-            <span>💡 ADHD Study Strategy ({data.adhdLevel} Level)</span>
-          </div>
-          {data.studyRecommendation ? (
-            <p style={{ fontSize: "14px", color: "#312e81", margin: 0, lineHeight: 1.6 }}>
-              {data.studyRecommendation}
-            </p>
-          ) : (
-            <p style={{ fontSize: "14px", color: "#312e81", margin: 0, lineHeight: 1.6 }}>
-              We have structured your study session with a custom timer. Take regular short breaks, focus on one chunk at a time, and test yourself with the Quiz tab!
-            </p>
-          )}
-        </div>
-      )}
 
       {/* Main Container */}
       <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>

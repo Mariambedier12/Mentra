@@ -10,12 +10,12 @@ export default function ProfileForm({
   return (
     <div className="bg-white rounded-[10px] pb-45 p-10 shadow-sm border border-[#F1F1F1]">
 
-      <h1 className="text-[35px] font-bold text-[#1E1E1E] mb-12 leading-none">
+      <h1 className="text-[30px] font-bold text-[#1E1E1E] mb-12 leading-none">
         Personal Information
       </h1>
 
       {/* NAME */}
-      <div className="mb-8">
+      <div className="mb-12">
 
         <label className="block font-bold text-md text-[#1E1E1E] mb-3">
           Name
@@ -31,7 +31,7 @@ export default function ProfileForm({
       </div>
 
       {/* EMAIL */}
-      <div className="mb-16">
+      <div>
 
         <label className="block text-md font-bold text-[#1E1E1E] mb-3">
           Email
@@ -43,15 +43,6 @@ export default function ProfileForm({
           readOnly
           className="w-full h-[64px] bg-[#EEEEED] rounded-2xl px-5 outline-none text-[17px]"
         />
-
-      </div>
-
-      {/* FOOTER */}
-      <div className="border-t border-[#ECECEC] pt-10 flex justify-end">
-
-        <button className="bg-[#091A58] font-bold text-white px-9 py-4 rounded-2xl  text-sm hover:opacity-90 transition cursor-pointer">
-          Save Changes
-        </button>
 
       </div>
 

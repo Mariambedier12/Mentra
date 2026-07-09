@@ -13,20 +13,20 @@ export default function Header() {
           "linear-gradient(150deg, #FAF9F7 40%, #8C94B1 100%, #091A58 100%)",
       }}
     >
-      <div className="max-w-screen-xl mx-auto px-8 flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto px-8 flex flex-col lg:flex-row items-center justify-between gap-12 text-center lg:text-left">
 
 
-        <div className="max-w-xl">
+        <div className="max-w-xl flex flex-col items-center lg:items-start">
 
-          <h1 className="text-5xl font-bold leading-tight drop-shadow-[0_3px_4px_rgba(19,91,236,0.25)]  ">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight drop-shadow-[0_3px_4px_rgba(19,91,236,0.25)]  ">
             Study in a Way Your <br />
             Brain <span className="text-[#091A58] drop-shadow-[0_2px_4px_rgba(19,91,236,0.25)] font-bold">Understands.</span>
           </h1>
 
-          <p className="[text-shadow:0_3px_4px_rgba(128,128,128,0.5)] mt-6  text-lg leading-relaxed">
-            Transform overwhelming study materials into clear, <br />
+          <p className="[text-shadow:0_3px_4px_rgba(128,128,128,0.5)] mt-6  text-base md:text-lg leading-relaxed">
+            Transform overwhelming study materials into clear, <br className="hidden md:inline" />
             structured, and distraction-free content designed
-            <br />specifically for ADHD learners.
+            <br className="hidden md:inline" />specifically for ADHD learners.
           </p>
 
           <Link href='auth/register'>
@@ -63,13 +63,13 @@ export default function Header() {
 
 
 
-        <div className="flex justify-center lg:justify-end items-end h-full ">
+        <div className="flex justify-center lg:justify-end items-end h-full w-full max-w-md lg:max-w-lg">
 
 
-          <Link href="/" >
+          <Link href="/" className="w-full">
             <Image src={img} alt='img'
 
-              className="w-full max-w-lg object-contain self-end" />
+              className="w-full h-auto object-contain self-end" />
           </Link>
 
 

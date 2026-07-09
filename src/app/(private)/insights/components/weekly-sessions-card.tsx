@@ -1,3 +1,6 @@
+import Image from "next/image";
+import checkIcon from "@/assets/check2.png";
+
 interface Props {
   sessions: number;
 }
@@ -10,8 +13,8 @@ export default function WeeklySessionsCard({ sessions }: Props) {
           <p style={{ fontSize: "12px", fontWeight: 600, color: "#6b7280", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>WEEKLY SESSIONS</p>
           <p style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937" }}>{sessions} sessions</p>
         </div>
-        <div style={{ background: "#eff6ff", borderRadius: "10px", padding: "0.6rem" }}>
-          <span style={{ fontSize: "18px" }}>🎯</span>
+        <div style={{ background: "#abc7e8", borderRadius: "18px", padding: "0.6rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Image src={checkIcon} alt="check" width={20} height={20} />
         </div>
       </div>
     </div>

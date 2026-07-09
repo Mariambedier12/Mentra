@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { uploadDocument } from "./_services/upload.service";
 import FadeLoader from "@/components/ui/FadeLoader";
+import { CheckCircle2, FileCheck, AlertCircle } from "lucide-react";
 
 // Figma Assets
 import calenderupload from "@/assets/calenderupload.png";
@@ -17,17 +18,16 @@ export default function UploadPage() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [adhdLevel, setAdhdLevel] = useState("...");
-  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
-  const [documentId, setDocumentId] = useState<number | null>(null);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  const fetchHistory = (token: string) => {
-    fetch("http://mentraa.runasp.net/api/Document/history", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => setHistory(Array.isArray(data) ? data : []));
-  };
+  // Upload and file state
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+  const [uploadedDocId, setUploadedDocId] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+
 
   useEffect(() => {
     const token = (session as any)?.user?.token;
@@ -39,63 +39,6 @@ export default function UploadPage() {
       .then((res) => res.json())
       .then((data) => setUserName(data.displayName || data.userName || ""))
       .catch(() => setUserName((session as any)?.user?.name || ""));
-
-    fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.level) window.location.href = "/quiz";
-        else setAdhdLevel(data.level);
-      });
-
-    fetchHistory(token);
-  }, [session]);
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-
-  // Upload and file state
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
-  const [uploadedDocId, setUploadedDocId] = useState<number | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Local Storage document history
-  const [history, setHistory] = useState<{ id: number; name: string; date: string }[]>([]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("mentra_upload_history");
-    if (saved) {
-      try {
-        setHistory(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse history", e);
-      }
-    }
-  }, []);
-
-  const saveToHistory = (id: number, name: string) => {
-    const newItem = {
-      id,
-      name,
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    };
-    setHistory((prev) => {
-      const updated = [newItem, ...prev.filter(item => item.id !== id)].slice(0, 5);
-      localStorage.setItem("mentra_upload_history", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  useEffect(() => {
-    const token = (session as any)?.user?.token;
-    if (!token) return;
 
     fetch("http://mentraa.runasp.net/api/Quiz/my-level", {
       headers: { Authorization: `Bearer ${token}` },
@@ -156,12 +99,9 @@ export default function UploadPage() {
       if (docId) {
         setUploadedDocId(docId);
         setUploadStatus("success");
-        saveToHistory(docId, selectedFile.name);
       } else {
-        // Fallback to 1 if document uploaded successfully but no ID was returned
         setUploadedDocId(1);
         setUploadStatus("success");
-        saveToHistory(1, selectedFile.name);
       }
     } catch (err: any) {
       console.error("Upload error:", err);
@@ -175,17 +115,8 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="bg-[#FAF9F7] min-h-screen pt-32 px-6 pb-16">
-      <div className="max-w-[1050px] mx-auto">
-    if (date.toDateString() === today.toDateString()) return "Today";
-    if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
-    return date.toLocaleDateString();
-  };
-
-  return (
-    <div style={{ minHeight: "100vh", background: "#FAF9F7", padding: "6rem 4rem 2rem" }}>
-      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-
+    <div className="pt-32 px-6 pb-16">
+      <div className="max-w-[1100px] mx-auto">
         <h1 style={{ fontSize: "28px", fontWeight: 700, color: "#1f2937", marginBottom: "0.25rem" }}>
           Hello, {userName}!
         </h1>
@@ -200,7 +131,7 @@ export default function UploadPage() {
           </p>
 
           {/* Upload Area */}
-          <div 
+          <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -213,7 +144,7 @@ export default function UploadPage() {
               transition: "all 0.2s ease",
             }}
           >
-            <input 
+            <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
@@ -266,25 +197,50 @@ export default function UploadPage() {
             )}
 
             {uploadStatus === "success" && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                <div style={{ fontSize: "32px" }}>✅</div>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#10b981" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", animation: "fadeIn 0.3s ease-in-out" }}>
+                <div style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "50%",
+                  background: "#e6f4ea",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 8px 16px rgba(16, 185, 129, 0.12)",
+                  marginBottom: "4px"
+                }}>
+                  <CheckCircle2 size={32} color="#10b981" style={{ strokeWidth: 2.2 }} />
+                </div>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0f1f5c" }}>
                   Uploaded Successfully!
                 </h3>
-                <p style={{ fontSize: "14px", color: "black", fontWeight: 500 }}>
-                  📄 {file?.name}
-                </p>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  background: "white",
+                  padding: "0.6rem 1.25rem",
+                  borderRadius: "10px",
+                  border: "1px solid #e2e8f0",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.02)",
+                  maxWidth: "90%",
+                }}>
+                  <FileCheck size={16} color="#0f1f5c" />
+                  <span style={{ fontSize: "13px", color: "#334155", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
+                    {file?.name}
+                  </span>
+                </div>
                 <button
                   onClick={handleButtonClick}
                   style={{
                     background: "none",
-                    color: "#091A58",
+                    color: "#64748b",
                     border: "none",
-                    fontSize: "13px",
-                    fontWeight: 700,
+                    fontSize: "12px",
+                    fontWeight: 600,
                     textDecoration: "underline",
                     cursor: "pointer",
-                    marginTop: "8px",
+                    marginTop: "4px",
                   }}
                 >
                   Choose a different file
@@ -293,12 +249,24 @@ export default function UploadPage() {
             )}
 
             {uploadStatus === "error" && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                <div style={{ fontSize: "32px" }}>⚠️</div>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ef4444" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", animation: "fadeIn 0.3s ease-in-out" }}>
+                <div style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "50%",
+                  background: "#fdf2f2",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 8px 16px rgba(239, 68, 68, 0.12)",
+                  marginBottom: "4px"
+                }}>
+                  <AlertCircle size={32} color="#ef4444" style={{ strokeWidth: 2.2 }} />
+                </div>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#ef4444" }}>
                   Upload Failed
                 </h3>
-                <p style={{ fontSize: "14px", color: "#ef4444", maxWidth: "400px" }}>
+                <p style={{ fontSize: "13px", color: "#64748b", maxWidth: "320px", lineHeight: 1.5, margin: 0 }}>
                   {errorMessage}
                 </p>
                 <button
@@ -306,85 +274,19 @@ export default function UploadPage() {
                   style={{
                     background: "#091A58",
                     color: "white",
-                    padding: "0.5rem 1.5rem",
+                    padding: "0.6rem 2rem",
                     borderRadius: "99px",
                     fontSize: "13px",
                     fontWeight: 700,
                     border: "none",
                     cursor: "pointer",
-                    marginTop: "8px",
+                    marginTop: "4px",
+                    boxShadow: "0 4px 6px rgba(9, 26, 88, 0.15)",
                   }}
                 >
                   Try Again
                 </button>
               </div>
-          <div style={{
-            border: uploadedFile ? "2px solid #4338ca" : "2px dashed #d1d5db",
-            borderRadius: "12px",
-            padding: "3rem",
-            textAlign: "center",
-            background: uploadedFile ? "#eef2ff" : "#f9fafb",
-            transition: "all 0.3s ease",
-          }}>
-            <div style={{ fontSize: "32px", marginBottom: "1rem" }}>
-              {uploadedFile ? "✅" : "☁️"}
-            </div>
-            <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#1f2937", marginBottom: "0.5rem" }}>
-              {uploadedFile ? uploadedFile : "Upload Lectures"}
-            </h3>
-            <p style={{ fontSize: "14px", color: "#9ca3af", marginBottom: "1.5rem" }}>
-              {uploadedFile ? "File uploaded successfully" : "Drag and drop PDF, JPG, Or PNG"}
-            </p>
-
-            <input
-              type="file"
-              id="file-upload"
-              accept=".pdf,.jpg,.jpeg,.png"
-              style={{ display: "none" }}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const token = (session as any)?.user?.token;
-                const formData = new FormData();
-                formData.append("file", file);
-                try {
-                  const res = await fetch("http://mentraa.runasp.net/api/Document/upload", {
-                    method: "POST",
-                    headers: { Authorization: `Bearer ${token}` },
-                    body: formData,
-                  });
-                  if (res.ok) {
-                    const data = await res.json();
-                    setUploadedFile(file.name);
-                    setDocumentId(data.id || data.documentId || 1);
-                    fetchHistory(token);
-                  } else {
-                    alert("Upload failed, please try again.");
-                  }
-                } catch {
-                  alert("Something went wrong.");
-                }
-              }}
-            />
-
-            {!uploadedFile && (
-              <button
-                onClick={() => document.getElementById("file-upload")?.click()}
-                style={{ background: "#0f1f5c", color: "white", padding: "0.75rem 2rem", borderRadius: "99px", fontSize: "14px", fontWeight: 500, border: "none", cursor: "pointer" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#1a3a8f")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "#0f1f5c")}
-              >
-                Upload Content
-              </button>
-            )}
-
-            {uploadedFile && (
-              <button
-                onClick={() => { setUploadedFile(null); setDocumentId(null); }}
-                style={{ background: "transparent", color: "#ef4444", padding: "0.5rem 1rem", borderRadius: "99px", fontSize: "13px", border: "1px solid #ef4444", cursor: "pointer" }}
-              >
-                Remove
-              </button>
             )}
           </div>
         </div>
@@ -392,8 +294,7 @@ export default function UploadPage() {
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <button
             onClick={handleStartSession}
-            disabled={!uploadedFile}
-            onClick={() => router.push(`/study-session?documentId=${documentId}`)}
+            disabled={uploadStatus !== "success"}
             style={{
               background: "#091A58",
               color: "white",
@@ -402,92 +303,31 @@ export default function UploadPage() {
               fontSize: "16px",
               fontWeight: 700,
               border: "none",
-              cursor: uploadedFile ? "pointer" : "not-allowed",
+              cursor: uploadStatus === "success" ? "pointer" : "not-allowed",
               display: "inline-flex",
               alignItems: "center",
               gap: "10px",
               boxShadow: "0 6px 15px rgba(9, 26, 88, 0.2)",
+              opacity: uploadStatus === "success" ? 1 : 0.6,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#132770")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#091A58")}
+            onMouseEnter={(e) => {
+              if (uploadStatus === "success") e.currentTarget.style.background = "#132770";
+            }}
+            onMouseLeave={(e) => {
+              if (uploadStatus === "success") e.currentTarget.style.background = "#091A58";
+            }}
           >
             Start Session
             <Image src={startsession} alt="Start Icon" width={18} height={18} />
           </button>
           <p style={{ fontSize: "14px", color: "black", marginTop: "0.75rem", fontWeight: 500 }}>
-            {uploadStatus === "success" 
-              ? "Your document is ready. Click to start learning!" 
+            {uploadStatus === "success"
+              ? "Your document is ready. Click to start learning!"
               : "Start learning now"}
           </p>
         </div>
 
-        {/* Upload History Card */}
-        <div style={{ background: "#FFFFFF", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "2rem 2.5rem", marginTop: "2rem", boxShadow: "0 6px 20px rgba(0, 0, 0, 0.02)" }}>
-          <p style={{ fontSize: "13px", fontWeight: 800, color: "#091A58", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            📚 Lecture History
-          </p>
-          {history.length === 0 ? (
-            <p style={{ fontSize: "14px", color: "#9ca3af", textAlign: "center", margin: "1rem 0" }}>
-              No lectures uploaded yet. Your history will appear here once you upload a file.
-            </p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {history.map((item, index) => (
-                <div 
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "0.875rem 1.25rem",
-                    background: "#f9fafb",
-                    borderRadius: "12px",
-                    border: "1px solid #f3f4f6",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#f3f4f6";
-                    e.currentTarget.style.borderColor = "#e5e7eb";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "#f9fafb";
-                    e.currentTarget.style.borderColor = "#f3f4f6";
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", maxWidth: "70%" }}>
-                    <span style={{ fontSize: "18px" }}>📄</span>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                      <span style={{ fontSize: "14px", fontWeight: 600, color: "#1f2937", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {item.name}
-                      </span>
-                      <span style={{ fontSize: "11px", color: "#9ca3af" }}>
-                        Uploaded on {item.date}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => router.push(`/study-session?documentId=${item.id}`)}
-                    style={{
-                      background: "#091A58",
-                      color: "white",
-                      border: "none",
-                      padding: "0.5rem 1.25rem",
-                      borderRadius: "99px",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      transition: "background 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "#132770"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "#091A58"}
-                  >
-                    Study ➔
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
 
       </div>
     </div>

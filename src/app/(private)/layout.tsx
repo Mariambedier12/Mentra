@@ -46,11 +46,13 @@ export default function PrivateLayout({
   }
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col justify-between bg-[#FAF9F7]">
       <ReminderWatcher />
-      {children}
+      <div className="flex-grow">
+        {children}
+      </div>
       <Footer variant="small" />
-    </>
+    </div>
   );
 }
 

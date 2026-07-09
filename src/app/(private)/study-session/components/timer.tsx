@@ -6,12 +6,13 @@ interface Props {
   time: string;
   isRunning: boolean;
   mode?: "study" | "break";
+  isLoading?: boolean;
   onToggle: () => void;
   onReset: () => void;
   onEnd: () => Promise<void>;
 }
 
-export default function Timer({ time, isRunning, mode = "study", onToggle, onReset, onEnd }: Props) {
+export default function Timer({ time, isRunning, mode = "study", isLoading = false, onToggle, onReset, onEnd }: Props) {
   return (
     <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "1rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -26,14 +27,17 @@ export default function Timer({ time, isRunning, mode = "study", onToggle, onRes
           justifyContent: "center",
           transition: "all 0.3s ease"
         }}>
-          {mode === "break" ? (
-            <span style={{ fontSize: "18px" }}>☕</span>
-          ) : (
-            <Image src={studyscreentimer} alt="Timer Icon" width={20} height={20} />
-          )}
+          <Image src={studyscreentimer} alt="Timer Icon" width={20} height={20} />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontSize: "24px", fontWeight: 700, color: "#1f2937", lineHeight: 1.1 }}>{time}</span>
+          {isLoading ? (
+            <span style={{ fontSize: "18px", fontWeight: 700, color: "#9ca3af", display: "flex", alignItems: "center", gap: "8px", height: "26px" }}>
+              <span className="inline-block w-4.5 h-4.5 rounded-full border-2 border-gray-200 border-t-[#091A58] animate-spin" />
+              Loading...
+            </span>
+          ) : (
+            <span style={{ fontSize: "24px", fontWeight: 700, color: "#1f2937", lineHeight: 1.1 }}>{time}</span>
+          )}
           <span style={{ 
             fontSize: "12px", 
             fontWeight: 600, 
