@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import readyImg from "@/assets/ready.png";
@@ -47,59 +47,6 @@ const features = [
     ),
 
 
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3Z" stroke="#0f1f5c" strokeWidth="1.8" />
-        <path d="M8.5 12.5L10.8 14.8L15.5 10.1" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-];
-
-const features = [
-  {
-    title: (
-      <>
-        18
-        <br />
-        Questions
-      </>
-    ),
-    
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 12.5L11.5 15L15 10.5" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#0f1f5c" strokeWidth="1.8" />
-      </svg>
-    ),
-  },
-  {
-    title: (
-      <>
-        Quick
-        <br />
-        Assessment
-      </>
-    ),
-    
-    
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 6V12L15.5 15.5" stroke="#0f1f5c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M20.4 12C20.4 16.692 16.692 20.4 12 20.4C7.308 20.4 3.6 16.692 3.6 12C3.6 7.308 7.308 3.6 12 3.6C16.692 3.6 20.4 7.308 20.4 12Z" stroke="#0f1f5c" strokeWidth="1.8" />
-      </svg>
-    ),
-  },
-  {
-    title: (
-      <>
-        Private
-        <br />
-        Results
-      </>
-    ),
-    
-    
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3Z" stroke="#0f1f5c" strokeWidth="1.8" />
